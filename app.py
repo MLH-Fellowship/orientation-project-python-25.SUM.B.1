@@ -62,22 +62,21 @@ def experience():
         new_exp = Experience(id=new_id, **exp_data)
         data["experience"].append(new_exp)
         return jsonify({"id": new_id}), 201
-    
+
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
     '''
     Handles education requests
     '''
     if request.method == 'GET':
-        return jsonify([edu.__dict__ for edu in data["education"]])
+        return jsonify([e.__dict__ for e in data["education"]])
 
     if request.method == 'POST':
         edu_data = request.get_json()
-        new_id = len(data["education"]) + 1
+        new_id = len(data["education"])
         new_edu = Education(id=new_id, **edu_data)
         data["education"].append(new_edu)
         return jsonify({"id": new_id}), 201
-
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
@@ -85,13 +84,14 @@ def skill():
     Handles Skill requests
     '''
     if request.method == 'GET':
-        return jsonify({})
+        return jsonify([s.__dict__ for s in data["skill"]])
 
     if request.method == 'POST':
-        return jsonify({})
-
-    return jsonify({})
-
+        skill_data = request.get_json()
+        new_id = len(data["skill"])
+        new_skill = Skill(id=new_id, **skill_data)
+        data["skill"].append(new_skill)
+        return jsonify({"id": new_id}), 201
 
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
