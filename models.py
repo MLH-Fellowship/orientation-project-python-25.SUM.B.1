@@ -1,5 +1,4 @@
 # pylint: disable=R0913
-
 '''
 Models for the Resume API. Each class is related to
 '''
@@ -9,9 +8,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Experience:
-    '''
-    Experience Class
-    '''
+    '''Experience model with job history details.'''
+    id: int
     title: str
     company: str
     start_date: str
@@ -22,9 +20,8 @@ class Experience:
 
 @dataclass
 class Education:
-    '''
-    Education Class
-    '''
+    '''Education model with academic history.'''
+    id: int
     course: str
     school: str
     start_date: str
@@ -35,9 +32,8 @@ class Education:
 
 @dataclass
 class Skill:
-    '''
-    Skill Class
-    '''
+    '''Skill model with proficiency and logo.'''
+    id: int
     name: str
     proficiency: str
     logo: str
