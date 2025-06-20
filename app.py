@@ -3,25 +3,32 @@ Flask Application
 '''
 from flask import Flask, jsonify, request
 from models import Experience, Education, Skill
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 
 data = {
     "experience": [
-        Experience("Software Developer",
-                   "A Cool Company",
-                   "October 2022",
-                   "Present",
-                   "Writing Python Code",
-                   "example-logo.png")
+        Experience(
+            id=1,
+            title="Software Developer",
+            company="A Cool Company",
+            start_date="October 2022",
+            end_date="Present",
+            description="Writing Python Code",
+            logo="example-logo.png")
     ],
     "education": [
-        Education("Computer Science",
-                  "University of Tech",
-                  "September 2019",
-                  "July 2022",
-                  "80%",
-                  "example-logo.png")
+        Education(
+            id=1,
+            course="Computer Science",
+            school="University of Tech",
+            start_date="September 2019",
+            end_date="July 2022",
+            grade="80%",
+            logo="example-logo.png")
     ],
     "skill": [
         Skill("Python",
@@ -78,3 +85,17 @@ def skill():
         return jsonify({})
 
     return jsonify({})
+
+
+@app.route('/resume/education/<int:education_id>', methods=['GET'])
+def get_education_by_id(education_id):
+    '''
+    Returns one education object by its ID
+    '''
+    for edu in data["education"]:
+        if edu.id == education_id:
+            return jsonify(edu.__dict__), 200
+
+    return jsonify({"error": "Education not found"}), 404
+
+
