@@ -6,36 +6,39 @@ from flask_cors import CORS
 
 from models import Experience, Education, Skill
 
-
 app = Flask(__name__)
 CORS(app)
-
 
 data = {
     "experience": [
         Experience(
-            id=1,
+            id=0,
             title="Software Developer",
             company="A Cool Company",
             start_date="October 2022",
             end_date="Present",
             description="Writing Python Code",
-            logo="example-logo.png")
+            logo="example-logo.png"
+        )
     ],
     "education": [
         Education(
-            id=1,
+            id=0,
             course="Computer Science",
             school="University of Tech",
             start_date="September 2019",
             end_date="July 2022",
             grade="80%",
-            logo="example-logo.png")
+            logo="example-logo.png"
+        )
     ],
     "skill": [
-        Skill("Python",
-              "1-2 Years",
-              "example-logo.png")
+        Skill(
+            id=0,
+            name="Python",
+            proficiency="1-2 Years",
+            logo="example-logo.png"
+        )
     ]
 }
 
@@ -50,26 +53,29 @@ def hello_world():
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
-    '''
-    Handle experience requests
-    '''
     if request.method == 'GET':
-        return jsonify([exp.__dict__ for exp in data["experience"]])
+        return jsonify([
+            {k: v for k, v in exp.__dict__.items() if k != "id"}
+            for exp in data["experience"]
+        ])
 
     if request.method == 'POST':
         exp_data = request.get_json()
-        new_id = len(data["experience"]) + 1
+        new_id = len(data["experience"])
         new_exp = Experience(id=new_id, **exp_data)
         data["experience"].append(new_exp)
         return jsonify({"id": new_id}), 201
 
+    return jsonify({"error": "Method not allowed"}), 405
+
+
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
-    '''
-    Handles education requests
-    '''
     if request.method == 'GET':
-        return jsonify([e.__dict__ for e in data["education"]])
+        return jsonify([
+            {k: v for k, v in edu.__dict__.items() if k != "id"}
+            for edu in data["education"]
+        ])
 
     if request.method == 'POST':
         edu_data = request.get_json()
@@ -78,13 +84,16 @@ def education():
         data["education"].append(new_edu)
         return jsonify({"id": new_id}), 201
 
+    return jsonify({"error": "Method not allowed"}), 405
+
+
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
-    '''
-    Handles Skill requests
-    '''
     if request.method == 'GET':
-        return jsonify([s.__dict__ for s in data["skill"]])
+        return jsonify([
+            {k: v for k, v in s.__dict__.items() if k != "id"}
+            for s in data["skill"]
+        ])
 
     if request.method == 'POST':
         skill_data = request.get_json()
@@ -93,11 +102,11 @@ def skill():
         data["skill"].append(new_skill)
         return jsonify({"id": new_id}), 201
 
+    return jsonify({"error": "Method not allowed"}), 405
+
+
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
-    '''
-    Returns one education object by its ID
-    '''
     for edu in data["education"]:
         if edu.id == education_id:
             return jsonify(edu.__dict__), 200
