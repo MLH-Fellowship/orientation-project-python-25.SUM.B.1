@@ -1,9 +1,9 @@
 '''
 Flask Application
 '''
-from flask import Flask, jsonify, request
-from models import Experience, Education, Skill
 from flask_cors import CORS
+from models import Experience, Education, Skill
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 CORS(app)
@@ -97,5 +97,3 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
-
-

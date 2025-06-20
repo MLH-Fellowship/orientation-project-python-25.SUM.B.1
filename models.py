@@ -12,14 +12,13 @@ class Experience:
     '''
     Experience Class
     '''
-    id: int     
+    id: int
     title: str
     company: str
     start_date: str
     end_date: str
     description: str
     logo: str
-
 
 @dataclass
 class Education:
