@@ -1,9 +1,11 @@
 '''
 Flask Application
 '''
-from flask_cors import CORS
-from models import Experience, Education, Skill
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+
+from models import Experience, Education, Skill
+
 
 app = Flask(__name__)
 CORS(app)
@@ -52,25 +54,29 @@ def experience():
     Handle experience requests
     '''
     if request.method == 'GET':
-        return jsonify()
+        return jsonify([exp.__dict__ for exp in data["experience"]])
 
     if request.method == 'POST':
-        return jsonify({})
-
-    return jsonify({})
-
+        exp_data = request.get_json()
+        new_id = len(data["experience"]) + 1
+        new_exp = Experience(id=new_id, **exp_data)
+        data["experience"].append(new_exp)
+        return jsonify({"id": new_id}), 201
+    
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
     '''
     Handles education requests
     '''
     if request.method == 'GET':
-        return jsonify({})
+        return jsonify([edu.__dict__ for edu in data["education"]])
 
     if request.method == 'POST':
-        return jsonify({})
-
-    return jsonify({})
+        edu_data = request.get_json()
+        new_id = len(data["education"]) + 1
+        new_edu = Education(id=new_id, **edu_data)
+        data["education"].append(new_edu)
+        return jsonify({"id": new_id}), 201
 
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
