@@ -8,6 +8,25 @@ from dataclasses import dataclass
 
 @dataclass
 class Experience:
+
+    def __init__(self, role, company, start, end, description, logo):
+        self.role = role
+        self.company = company
+        self.start = start
+        self.end = end
+        self.description = description
+        self.logo = logo
+
+    def serialize(self):
+        return {
+            "role": self.role,
+            "company": self.company,
+            "start": self.start,
+            "end": self.end,
+            "description": self.description,
+            "logo": self.logo
+        }
+
     '''Experience model with job history details.'''
     id: int
     title: str
@@ -16,6 +35,7 @@ class Experience:
     end_date: str
     description: str
     logo: str
+
 
 
 @dataclass

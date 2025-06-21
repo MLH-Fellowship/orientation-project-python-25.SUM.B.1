@@ -11,16 +11,15 @@ CORS(app)
 
 data = {
     "experience": [
-        Experience(
-            id=0,
-            title="Software Developer",
-            company="A Cool Company",
-            start_date="October 2022",
-            end_date="Present",
-            description="Writing Python Code",
-            logo="example-logo.png"
-        )
-    ],
+    Experience(
+        "Software Developer",
+        "A Cool Company",
+        "October 2022",
+        "Present",
+        "Writing Python Code",
+        "example-logo.png"
+    )
+],
     "education": [
         Education(
             id=0,
@@ -51,8 +50,31 @@ def hello_world():
     return jsonify({"message": "Hello, World!"})
 
 
+@app.route('/resume/experience/<int:idx>', methods=['GET'])
+def get_experience_by_id(idx):
+    if 0 <= idx < len(data["experience"]):
+        return jsonify(data["experience"][idx].serialize())
+    return jsonify({"error": "Experience not found"}), 404
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
+
+    if request.method == 'GET':
+        return jsonify([exp.serialize() for exp in data['experience']])
+
+    if request.method == 'POST':
+        new_data = request.get_json()
+        new_exp = Experience(
+            new_data["role"],
+            new_data["company"],
+            new_data["start"],
+            new_data["end"],
+            new_data["description"],
+            new_data["logo"]
+        )
+        data["experience"].append(new_exp)
+        index = len(data["experience"]) - 1
+        return jsonify({"index": index}), 201
+
     '''Handles GET and POST for experience.'''
     if request.method == 'GET':
         return jsonify([
@@ -68,6 +90,7 @@ def experience():
         return jsonify({"id": new_id}), 201
 
     return jsonify({"error": "Method not allowed"}), 405
+
 
 
 @app.route('/resume/education', methods=['GET', 'POST'])

@@ -11,16 +11,19 @@ pip install -r requirements.txt
 ```
 
 ## Run
+
 ```
 flask run
 ```
 
 ### Run tests
+
 ```
 pytest test_pytest.py
 ```
 
 ### Run Linter
+
 ```
 pylint *.py
 ```
