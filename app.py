@@ -53,6 +53,11 @@ def hello_world():
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
+
+    if request.method == 'GET':
+        return jsonify([exp.serialize() for exp in data['experience']])
+    return jsonify({})
+
     '''Handles GET and POST for experience.'''
     if request.method == 'GET':
         return jsonify([
@@ -68,6 +73,7 @@ def experience():
         return jsonify({"id": new_id}), 201
 
     return jsonify({"error": "Method not allowed"}), 405
+
 
 
 @app.route('/resume/education', methods=['GET', 'POST'])
