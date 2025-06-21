@@ -11,16 +11,15 @@ CORS(app)
 
 data = {
     "experience": [
-        Experience(
-            id=0,
-            title="Software Developer",
-            company="A Cool Company",
-            start_date="October 2022",
-            end_date="Present",
-            description="Writing Python Code",
-            logo="example-logo.png"
-        )
-    ],
+    Experience(
+        "Software Developer",
+        "A Cool Company",
+        "October 2022",
+        "Present",
+        "Writing Python Code",
+        "example-logo.png"
+    )
+],
     "education": [
         Education(
             id=0,
