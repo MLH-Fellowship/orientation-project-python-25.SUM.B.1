@@ -41,15 +41,8 @@ def hello_world():
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
-    '''
-    Handle experience requests
-    '''
     if request.method == 'GET':
-        return jsonify()
-
-    if request.method == 'POST':
-        return jsonify({})
-
+        return jsonify([exp.serialize() for exp in data['experience']])
     return jsonify({})
 
 @app.route('/resume/education', methods=['GET', 'POST'])
