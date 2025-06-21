@@ -72,3 +72,29 @@ def test_skill():
 
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
+
+def test_get_education_by_id():
+    '''
+    Adds a new education entry (POST)
+    Gets that entry by its ID
+    Checks if the returned data matches the original input
+    '''
+    client = app.test_client()
+
+    new_education = {
+        "course": "Data Science",
+        "school": "CUNY SPS",
+        "start_date": "2025",
+        "end_date": "2026",
+        "grade": "90%",
+        "logo": "cuny-logo.jpeg"
+    }
+
+    post_response = client.post('/resume/education', json=new_education)
+    new_id = post_response.get_json()["id"]
+
+    get_response = client.get(f'/resume/education/{new_id}')
+    assert get_response.status_code == 200
+    assert get_response.get_json()["course"] == "Data Science"
+
+
