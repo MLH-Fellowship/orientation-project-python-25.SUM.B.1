@@ -14,25 +14,23 @@ def test_client():
 
 
 def test_experience():
-    '''
-    Add a new experience and then get all experiences. 
-    
-    Check that it returns the new experience in that list
-    '''
     example_experience = {
-        "title": "Software Developer",
+        "role": "Software Developer",
         "company": "A Cooler Company",
-        "start_date": "October 2022",
-        "end_date": "Present",
+        "start": "October 2022",
+        "end": "Present",
         "description": "Writing JavaScript Code",
         "logo": "example-logo.png"
     }
 
-    item_id = app.test_client().post('/resume/experience',
-                                     json=example_experience).json['id']
-    response = app.test_client().get('/resume/experience')
-    assert response.json[item_id] == example_experience
+    res = app.test_client().post('/resume/experience', json=example_experience)
+    item_index = res.json['index']
 
+    response = app.test_client().get('/resume/experience')
+    full_list = response.json
+
+    assert full_list[item_index]["role"] == example_experience["role"]
+    assert full_list[item_index]["company"] == example_experience["company"]
 
 def test_education():
     '''

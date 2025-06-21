@@ -39,11 +39,29 @@ def hello_world():
     return jsonify({"message": "Hello, World!"})
 
 
+@app.route('/resume/experience/<int:idx>', methods=['GET'])
+def get_experience_by_id(idx):
+    if 0 <= idx < len(data["experience"]):
+        return jsonify(data["experience"][idx].serialize())
+    return jsonify({"error": "Experience not found"}), 404
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
     if request.method == 'GET':
         return jsonify([exp.serialize() for exp in data['experience']])
-    return jsonify({})
+
+    if request.method == 'POST':
+        new_data = request.get_json()
+        new_exp = Experience(
+            new_data["role"],
+            new_data["company"],
+            new_data["start"],
+            new_data["end"],
+            new_data["description"],
+            new_data["logo"]
+        )
+        data["experience"].append(new_exp)
+        index = len(data["experience"]) - 1
+        return jsonify({"index": index}), 201
 
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
