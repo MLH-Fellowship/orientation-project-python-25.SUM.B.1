@@ -14,6 +14,8 @@ def test_client():
 
 
 def test_experience():
+    '''Add a new experience and then get all experiences.
+    Confirm that it returns the new experience in the correct position.'''
     example_experience = {
         "role": "Software Developer",
         "company": "A Cooler Company",
@@ -23,14 +25,26 @@ def test_experience():
         "logo": "example-logo.png"
     }
 
-    res = app.test_client().post('/resume/experience', json=example_experience)
-    item_index = res.json['index']
+    client = app.test_client()
 
-    response = app.test_client().get('/resume/experience')
-    full_list = response.json
 
-    assert full_list[item_index]["role"] == example_experience["role"]
-    assert full_list[item_index]["company"] == example_experience["company"]
+    post_response = client.post('/resume/experience', json=example_experience)
+    assert post_response.status_code == 201
+    item_index = post_response.json['index']
+
+   
+    get_response = client.get('/resume/experience')
+    assert get_response.status_code == 200
+    experiences = get_response.json
+
+  
+    inserted_exp = experiences[item_index]
+    assert inserted_exp["role"] == example_experience["role"]
+    assert inserted_exp["company"] == example_experience["company"]
+    assert inserted_exp["start"] == example_experience["start"]
+    assert inserted_exp["end"] == example_experience["end"]
+    assert inserted_exp["description"] == example_experience["description"]
+    assert inserted_exp["logo"] == example_experience["logo"]
 
 def test_education():
     '''
