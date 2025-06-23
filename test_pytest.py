@@ -3,7 +3,6 @@ Tests in Pytest
 '''
 from app import app
 
-
 def test_client():
     '''
     Makes a request and checks the message received is the same
@@ -12,10 +11,10 @@ def test_client():
     assert response.status_code == 200
     assert response.json['message'] == "Hello, World!"
 
+def test_get_specific_experience():
+    '''Get the first experience by index and check its structure.'''
+    client = app.test_client()
 
-def test_experience():
-    '''Add a new experience and then get all experiences.
-    Confirm that it returns the new experience in the correct position.'''
     example_experience = {
         "role": "Software Developer",
         "company": "A Cooler Company",
@@ -25,19 +24,29 @@ def test_experience():
         "logo": "example-logo.png"
     }
 
-    client = app.test_client()
+    post_response = client.post('/resume/experience', json=example_experience)
+    assert post_response.status_code == 201
+    item_index = post_response.json['index']
 
+    get_response = client.get(f'/resume/experience/{item_index}')
+    assert get_response.status_code == 200
+    data = get_response.json
+
+    assert data["role"] == example_experience["role"]
+    assert data["company"] == example_experience["company"]
+    assert data["start"] == example_experience["start"]
+    assert data["end"] == example_experience["end"]
+    assert data["description"] == example_experience["description"]
+    assert data["logo"] == example_experience["logo"]
 
     post_response = client.post('/resume/experience', json=example_experience)
     assert post_response.status_code == 201
     item_index = post_response.json['index']
 
-   
     get_response = client.get('/resume/experience')
     assert get_response.status_code == 200
     experiences = get_response.json
 
-  
     inserted_exp = experiences[item_index]
     assert inserted_exp["role"] == example_experience["role"]
     assert inserted_exp["company"] == example_experience["company"]
