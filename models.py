@@ -10,6 +10,7 @@ from dataclasses import dataclass
 class Experience:
     '''Experience model with job history details.'''
 
+# pylint: disable=too-many-arguments
     def __init__(self, role, company, start, end, description, logo):
         self.role = role
         self.company = company
@@ -19,6 +20,8 @@ class Experience:
         self.logo = logo
 
     def serialize(self):
+        """return the  experience data as a dictionary""" 
+
         return {
             "role": self.role,
             "company": self.company,
