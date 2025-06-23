@@ -5,7 +5,7 @@ Models for the Resume API. Each class is related to
 
 from dataclasses import dataclass
 
-# pylint: disable=R0917
+
 @dataclass
 class Experience:
     '''Experience model with job history details.'''
