@@ -2,6 +2,7 @@
 Tests in Pytest
 '''
 from app import app
+from models import Contact
 
 
 def test_client():
@@ -72,3 +73,72 @@ def test_skill():
 
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
+
+
+def test_contact_creation():
+    '''Test creating a contact with valid data'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    
+    assert contact.name == "John Doe"
+    assert contact.email == "john.doe@example.com"
+    assert contact.phone == "+1234567890"
+    assert contact.linkedin == "https://linkedin.com/in/johndoe"
+    assert contact.github == "https://github.com/johndoe"
+
+
+def test_validate_email_valid():
+    '''Test email validation with valid email'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    
+    assert contact.validate_email() is True
+
+
+def test_validate_email_invalid():
+    '''Test email validation with invalid email'''
+    contact = Contact(
+        name="John Doe",
+        email="invalid-email",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    
+    assert contact.validate_email() is False
+
+
+def test_validate_phone_valid():
+    '''Test phone validation with valid international format'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    
+    assert contact.validate_phone() is True
+
+
+def test_validate_phone_invalid():
+    '''Test phone validation with invalid format'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="1234567890",  # Missing + sign
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    
+    assert contact.validate_phone() is False
