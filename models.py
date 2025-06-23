@@ -55,7 +55,7 @@ class Contact:
 
     def validate_phone(self) -> bool:
         """Validate the phone number format with mandatory international country code."""
-        # Require + sign followed by country code (1-3 digits) and phone number (7-12 digits)
+        # Require + sign followed by a total of 8-15 digits (country code and phone number)
         phone_regex = r'^\+[1-9]\d{7,14}$'  # Must start with +, then 8-15 total digits
         return re.match(phone_regex, self.phone) is not None
 
