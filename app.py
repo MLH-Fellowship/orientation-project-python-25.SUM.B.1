@@ -172,8 +172,13 @@ def contact():
                 "github": new_contact.github
             })
             
+        except KeyError as e:
+            return jsonify({"error": f"Missing required field: {str(e)}"}), 400
+        except ValueError as e:
+            return jsonify({"error": f"Validation error: {str(e)}"}), 400
         except Exception as e:
-            return jsonify({"error": f"Failed to save contact information: {str(e)}"}), 500
+            app.logger.error(f"Unexpected error: {str(e)}")
+            return jsonify({"error": "An unexpected error occurred. Please try again later."}), 500
 
     return jsonify({})
 
