@@ -1,6 +1,6 @@
-'''
+"""
 Flask Application
-'''
+"""
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from models import Experience, Education, Skill, Contact
@@ -29,7 +29,8 @@ data = {
             start_date="September 2019",
             end_date="July 2022",
             grade="80%",
-            logo="example-logo.png"        )
+            logo="example-logo.png"
+        )
     ],
     "skill": [
         Skill(
@@ -45,15 +46,15 @@ data = {
 
 @app.route('/test')
 def hello_world():
-    '''
+    """
     Returns a JSON test message
-    '''
+    """
     return jsonify({"message": "Hello, World!"})
 
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
-    '''Handles GET and POST for experience.'''
+    """Handles GET and POST for experience."""
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in exp.__dict__.items() if k != "id"}
@@ -72,7 +73,7 @@ def experience():
 
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
-    '''Handles GET and POST for education.'''
+    """Handles GET and POST for education."""
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in edu.__dict__.items() if k != "id"}
@@ -91,7 +92,7 @@ def education():
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
-    '''Handles GET and POST for skill.'''
+    """Handles GET and POST for skill."""
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in s.__dict__.items() if k != "id"}
@@ -110,7 +111,7 @@ def skill():
 
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
-    '''Returns one education entry by ID.'''
+    """Returns one education entry by ID."""
     for edu in data["education"]:
         if edu.id == education_id:
             return jsonify(edu.__dict__), 200
@@ -120,7 +121,7 @@ def get_education_by_id(education_id):
 
 @app.route('/contact', methods=['GET', 'POST', 'PUT'])
 def contact():
-    '''Handles GET, POST, and PUT for contact information.'''
+    """Handles GET, POST, and PUT for contact information."""
     if request.method == 'GET':
         # Return current contact information
         if data["contact"]:
@@ -171,4 +172,3 @@ def contact():
             return jsonify({"error": "Failed to save contact information."}), 500
 
     return jsonify({})
-
