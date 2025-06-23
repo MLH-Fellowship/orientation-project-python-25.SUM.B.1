@@ -52,6 +52,8 @@ def hello_world():
 
 @app.route('/resume/experience/<int:idx>', methods=['GET'])
 def get_experience_by_id(idx):
+    """GET and POST requests for experience entries."""
+
     if 0 <= idx < len(data["experience"]):
         return jsonify(data["experience"][idx].serialize())
     return jsonify({"error": "Experience not found"}), 404
@@ -75,7 +77,6 @@ def experience():
         index = len(data["experience"]) - 1
         return jsonify({"index": index}), 201
 
-    '''Handles GET and POST for experience.'''
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in exp.__dict__.items() if k != "id"}
