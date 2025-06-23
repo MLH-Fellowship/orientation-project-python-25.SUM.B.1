@@ -84,7 +84,6 @@ def test_contact_creation():
         linkedin="https://linkedin.com/in/johndoe",
         github="https://github.com/johndoe"
     )
-    
     assert contact.name == "John Doe"
     assert contact.email == "john.doe@example.com"
     assert contact.phone == "+1234567890"
@@ -101,7 +100,6 @@ def test_validate_email_valid():
         linkedin="https://linkedin.com/in/johndoe",
         github="https://github.com/johndoe"
     )
-    
     assert contact.validate_email() is True
 
 
@@ -114,7 +112,6 @@ def test_validate_email_invalid():
         linkedin="https://linkedin.com/in/johndoe",
         github="https://github.com/johndoe"
     )
-    
     assert contact.validate_email() is False
 
 
@@ -127,7 +124,6 @@ def test_validate_phone_valid():
         linkedin="https://linkedin.com/in/johndoe",
         github="https://github.com/johndoe"
     )
-    
     assert contact.validate_phone() is True
 
 
@@ -140,5 +136,4 @@ def test_validate_phone_invalid():
         linkedin="https://linkedin.com/in/johndoe",
         github="https://github.com/johndoe"
     )
-    
     assert contact.validate_phone() is False
