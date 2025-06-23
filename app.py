@@ -6,7 +6,8 @@ from flask_cors import CORS
 from models import Experience, Education, Skill, Contact
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS for all routes
+
 
 data = {
     "experience": [
@@ -28,8 +29,7 @@ data = {
             start_date="September 2019",
             end_date="July 2022",
             grade="80%",
-            logo="example-logo.png"       
-        )
+            logo="example-logo.png"        )
     ],
     "skill": [
         Skill(
@@ -41,6 +41,7 @@ data = {
     ],
     "contact": None
 }
+
 
 @app.route('/test')
 def hello_world():
@@ -120,7 +121,6 @@ def get_education_by_id(education_id):
 @app.route('/contact', methods=['GET', 'POST', 'PUT'])
 def contact():
     '''Handles GET, POST, and PUT for contact information.'''
-  
     if request.method == 'GET':
         # Return current contact information
         if data["contact"]:
@@ -131,20 +131,17 @@ def contact():
                 "linkedin": data["contact"].linkedin,
                 "github": data["contact"].github
             })
-        else:
-            return jsonify({"message": "No contact information found"}), 404
+        return jsonify({"message": "No contact information found"}), 404
 
     if request.method in ['POST', 'PUT']:
         # Add or update contact information
         try:
             contact_data = request.get_json()
-            
             # Validate required fields
             required_fields = ['name', 'email', 'phone', 'linkedin', 'github']
             for field in required_fields:
                 if field not in contact_data:
                     return jsonify({"error": f"Missing required field: {field}"}), 400
-            
             # Create Contact instance
             new_contact = Contact(
                 name=contact_data['name'],
@@ -153,17 +150,14 @@ def contact():
                 linkedin=contact_data['linkedin'],
                 github=contact_data['github']
             )
-              # Validate email format
+            # Validate email format
             if not new_contact.validate_email():
                 return jsonify({"error": "Invalid email format"}), 400
-            
             # Validate phone format (international format)
             if not new_contact.validate_phone():
                 return jsonify({"error": "Invalid phone format. Phone number must include international country code (e.g., +1234567890)"}), 400
-            
             # Store the contact information
             data["contact"] = new_contact
-            
             return jsonify({
                 "name": new_contact.name,
                 "email": new_contact.email,
@@ -171,14 +165,10 @@ def contact():
                 "linkedin": new_contact.linkedin,
                 "github": new_contact.github
             })
-            
-        except KeyError as e:
-            return jsonify({"error": f"Missing required field: {str(e)}"}), 400
-        except ValueError as e:
-            return jsonify({"error": f"Validation error: {str(e)}"}), 400
-        except Exception as e:
-            app.logger.error(f"Unexpected error: {str(e)}")
-            return jsonify({"error": "An unexpected error occurred. Please try again later."}), 500
+        except Exception as exc:  # pylint: disable=broad-except
+            # Broad except used to catch unexpected errors and return a 500 response
+            app.logger.error("Unexpected error: %s", str(exc))
+            return jsonify({"error": "Failed to save contact information."}), 500
 
     return jsonify({})
 
