@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Experience:
+    '''Experience model with job history details.'''
 
     def __init__(self, role, company, start, end, description, logo):
         self.role = role
@@ -27,33 +28,22 @@ class Experience:
             "logo": self.logo
         }
 
-    '''Experience model with job history details.'''
+@dataclass
+class Education:
+    '''Education model with academic history.'''
     id: int
-    title: str
-    company: str
+    course: str
+    school: str
     start_date: str
     end_date: str
-    description: str
+    grade: str
     logo: str
 
 
-
-# @dataclass
-# class Education:
-#    '''Education model with academic history.'''
-#   id: int
-#  course: str
-#    school: str
-#    start_date: str
-#    end_date: str
-#    grade: str
-#    logo: str
-
-
-# @dataclass
-#class Skill:
-#   '''Skill model with proficiency and logo.'''
-#    id: int
-#    name: str
-#    proficiency: str
-#    logo: str
+@dataclass
+class Skill:
+    '''Skill model with proficiency and logo.'''
+    id: int
+    name: str
+    proficiency: str
+    logo: str
