@@ -3,8 +3,7 @@ Flask Application
 '''
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
-from models import Experience, Education, Skill
+from models import Experience, Education, Skill, Contact
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +28,7 @@ data = {
             start_date="September 2019",
             end_date="July 2022",
             grade="80%",
-            logo="example-logo.png"
+            logo="example-logo.png"       
         )
     ],
     "skill": [
@@ -39,9 +38,9 @@ data = {
             proficiency="1-2 Years",
             logo="example-logo.png"
         )
-    ]
+    ],
+    "contact": None
 }
-
 
 @app.route('/test')
 def hello_world():
@@ -116,3 +115,65 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
+
+
+@app.route('/contact', methods=['GET', 'POST', 'PUT'])
+def contact():
+    '''Handles GET, POST, and PUT for contact information.'''
+  
+    if request.method == 'GET':
+        # Return current contact information
+        if data["contact"]:
+            return jsonify({
+                "name": data["contact"].name,
+                "email": data["contact"].email,
+                "phone": data["contact"].phone,
+                "linkedin": data["contact"].linkedin,
+                "github": data["contact"].github
+            })
+        else:
+            return jsonify({"message": "No contact information found"}), 404
+
+    if request.method in ['POST', 'PUT']:
+        # Add or update contact information
+        try:
+            contact_data = request.get_json()
+            
+            # Validate required fields
+            required_fields = ['name', 'email', 'phone', 'linkedin', 'github']
+            for field in required_fields:
+                if field not in contact_data:
+                    return jsonify({"error": f"Missing required field: {field}"}), 400
+            
+            # Create Contact instance
+            new_contact = Contact(
+                name=contact_data['name'],
+                email=contact_data['email'],
+                phone=contact_data['phone'],
+                linkedin=contact_data['linkedin'],
+                github=contact_data['github']
+            )
+              # Validate email format
+            if not new_contact.validate_email():
+                return jsonify({"error": "Invalid email format"}), 400
+            
+            # Validate phone format (international format)
+            if not new_contact.validate_phone():
+                return jsonify({"error": "Invalid phone format. Phone number must include international country code (e.g., +1234567890)"}), 400
+            
+            # Store the contact information
+            data["contact"] = new_contact
+            
+            return jsonify({
+                "name": new_contact.name,
+                "email": new_contact.email,
+                "phone": new_contact.phone,
+                "linkedin": new_contact.linkedin,
+                "github": new_contact.github
+            })
+            
+        except Exception as e:
+            return jsonify({"error": f"Failed to save contact information: {str(e)}"}), 500
+
+    return jsonify({})
+
