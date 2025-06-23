@@ -9,9 +9,6 @@ from dataclasses import dataclass
 @dataclass
 class Experience:
     '''Experience model with job history details.'''
-@dataclass
-class Experience:
-    '''Experience model with job history details.'''
 
 
     def __init__(self, role, company, start, end, description, logo):
