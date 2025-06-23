@@ -156,7 +156,7 @@ def contact():
                 return jsonify({"error": "Invalid email format"}), 400
             # Validate phone format (international format)
             if not new_contact.validate_phone():
-                return jsonify({"error": "Invalid phone format. Phone number must include international country code (e.g., +1234567890)"}), 400
+                return jsonify({"error": "Invalid phone format. (e.g., +1234567890)"}), 400
             # Store the contact information
             data["contact"] = new_contact
             return jsonify({
