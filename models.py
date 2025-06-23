@@ -5,12 +5,12 @@ Models for the Resume API. Each class is related to
 
 from dataclasses import dataclass
 
-
+# pylint: disable=too-many-arguments
 @dataclass
 class Experience:
     '''Experience model with job history details.'''
 
-# pylint: disable=too-many-arguments
+
     def __init__(self, role, company, start, end, description, logo):
         self.role = role
         self.company = company

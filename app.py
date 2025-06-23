@@ -59,7 +59,6 @@ def get_experience_by_id(idx):
     return jsonify({"error": "Experience not found"}), 404
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
-    
     """Handles listing all experiences and adding a new experience entry."""
     if request.method == 'GET':
         return jsonify([exp.serialize() for exp in data['experience']])
