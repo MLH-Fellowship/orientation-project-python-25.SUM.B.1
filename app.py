@@ -126,7 +126,7 @@ def get_experience_by_id(experience_id):
 
     return jsonify({"error": "Ezperience not found"}), 404
 
-@app.route('/resume/skill/<int:skills_id>', methods=['GET'])
+@app.route('/resume/skill/<int:skill_id>', methods=['GET'])
 def get_skill_by_id(skill_id):
     '''Returns one skill entry by ID.'''
     for s in data["skill"]:
