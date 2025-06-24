@@ -1,6 +1,6 @@
-"""
+'''
 Flask Application
-"""
+'''
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from models import Experience, Education, Skill, Contact
@@ -121,22 +121,64 @@ def get_education_by_id(education_id):
 
 @app.route('/contact', methods=['GET', 'POST', 'PUT'])
 def contact():
-    """Handles GET, POST, and PUT for contact."""
+    '''Handles GET, POST, and PUT for contact information.'''
+    response_data = {}
+    status_code = 200
+
     if request.method == 'GET':
         if data["contact"]:
-            return jsonify(data["contact"].__dict__), 200
-        return jsonify({"error": "Contact not found"}), 404
+            response_data = {
+                "name": data["contact"].name,
+                "email": data["contact"].email,
+                "phone": data["contact"].phone,
+                "linkedin": data["contact"].linkedin,
+                "github": data["contact"].github
+            }
+        else:
+            response_data = {"message": "No contact information found"}
+            status_code = 404
 
-    if request.method == 'POST':
-        contact_data = request.get_json()
-        data["contact"] = Contact(**contact_data)
-        return jsonify({"message": "Contact created"}), 201
+    elif request.method in ['POST', 'PUT']:
+        try:
+            contact_data = request.get_json()
+            required_fields = ['name', 'email', 'phone', 'linkedin', 'github']
+            missing_fields = [field for field in required_fields if field not in contact_data]
+            if missing_fields:
+                response_data = {"error": f"Missing required fields: {', '.join(missing_fields)}"}
+                status_code = 400
+            else:
+                new_contact = Contact(
+                    name=contact_data['name'],
+                    email=contact_data['email'],
+                    phone=contact_data['phone'],
+                    linkedin=contact_data['linkedin'],
+                    github=contact_data['github']
+                )
+                if not new_contact.validate_email():
+                    response_data = {"error": "Invalid email format"}
+                    status_code = 400
+                elif not new_contact.validate_phone():
+                    response_data = {"error": "Invalid phone format. (e.g., +1234567890)"}
+                    status_code = 400
+                else:
+                    data["contact"] = new_contact
+                    response_data = {
+                        "name": new_contact.name,
+                        "email": new_contact.email,
+                        "phone": new_contact.phone,
+                        "linkedin": new_contact.linkedin,
+                        "github": new_contact.github
+                    }
+                    status_code = 200 if request.method == 'PUT' else 201
+        except (KeyError, ValueError) as e:
+            response_data = {"error": f"Data validation error: {str(e)}"}
+            status_code = 400
+        except (TypeError, AttributeError) as e:
+            response_data = {"error": f"Data processing error: {str(e)}"}
+            status_code = 400
 
-    if request.method == 'PUT':
-        contact_data = request.get_json()
-        if data["contact"]:
-            data["contact"] = Contact(**contact_data)
-            return jsonify({"message": "Contact updated"}), 200
-        return jsonify({"error": "Contact not found"}), 404
+    else:
+        response_data = {"error": "Method not allowed"}
+        status_code = 405
 
-    return jsonify({"error": "Method not allowed"}), 405
+    return jsonify(response_data), status_code
