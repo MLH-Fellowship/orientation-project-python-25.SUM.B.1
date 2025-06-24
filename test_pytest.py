@@ -97,4 +97,48 @@ def test_get_education_by_id():
     assert get_response.status_code == 200
     assert get_response.get_json()["course"] == "Data Science"
 
+def test_get_experience_by_id():
+    '''
+    Adds a new experience entry (POST)
+    Gets that entry by its ID
+    Checks if the returned data matches the original input
+    '''
+    client = app.test_client()
 
+    new_experience = {
+        "title": "Backend Developer",
+        "company": "MLH",
+        "start_date": "2025",
+        "end_date": "Present",
+        "description": "Working on APIs",
+        "logo": "mlh-logo.png"
+    }
+
+    post_response = client.post('/resume/experience', json=new_experience)
+    new_id = post_response.get_json()["id"]
+
+    get_response = client.get(f'/resume/experience/{new_id}')
+    assert get_response.status_code == 200
+    assert get_response.get_json()["title"] == "Backend Developer"
+
+def test_get_skill_by_id():
+    '''
+    Adds a new skill entry (POST)
+    Gets that entry by its ID
+    Checks if the returned data matches the original input
+    '''
+    client = app.test_client()
+
+    new_skill = {
+        "name": "Python",
+        "proficiency": "2-4 years",
+        "logo": "python-logo.png"
+    }
+
+    post_response = client.post('/resume/skill', json=new_skill)
+    new_id = post_response.get_json()["id"]
+
+    get_response = client.get(f'/resume/skill/{new_id}')
+    assert get_response.status_code == 200
+    assert get_response.get_json()["name"] == "Python"
+    

@@ -116,3 +116,21 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
+
+@app.route('/resume/experience/<int:experience_id>', methods=['GET'])
+def get_experience_by_id(experience_id):
+    '''Returns one experience entry by ID.'''
+    for exp in data["experience"]:
+        if exp.id == experience_id:
+            return jsonify(exp.__dict__), 200
+
+    return jsonify({"error": "Ezperience not found"}), 404
+
+@app.route('/resume/skill/<int:skills_id>', methods=['GET'])
+def get_skill_by_id(skill_id):
+    '''Returns one skill entry by ID.'''
+    for s in data["skill"]:
+        if s.id == skill_id:
+            return jsonify(s.__dict__), 200
+
+    return jsonify({"error": "Skill not found"}), 404
