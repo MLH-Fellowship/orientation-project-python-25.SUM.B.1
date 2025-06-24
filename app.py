@@ -1,104 +1,142 @@
-import React, { useState } from "react";
-import "./App.css";
+"""
+Flask Application
+"""
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from models import Experience, Education, Skill, Contact
 
-function App() {
-  // Add state for user information
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [linkedin, setLinkedin] = useState("");
-  const [github, setGithub] = useState("");
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you would typically send the data to your Flask backend
-    fetch("http://localhost:5000/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, phone, linkedin, github }),
-    })
-      .then((response) => response.json())
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
 
-  return (
-    <div className="App">
-      <h1>Resume Builder</h1>
-      {/* User Information Section */}
-      <form onSubmit={handleSubmit} className="userInfoSection">
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="tel"
-          placeholder="Phone +1234567890"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="LinkedIn URL"
-          value={linkedin}
-          onChange={(e) => setLinkedin(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="GitHub URL"
-          value={github}
-          onChange={(e) => setGithub(e.target.value)}
-        />
-        <button type="submit">Save Contact Info</button>
-      </form>
-      {/* Remove message display */}
-      {/* Display user info in resumeSection */}
-      <div className="resumeSection">
-        <div className="userInfoDisplay">
-          <h2>{name}</h2>
-          {(email || phone || linkedin || github) && (
-            <p>
-              {email && <span>{email}</span>}
-              {phone && <span> | {phone}</span>}
-              {linkedin && <span> | {linkedin}</span>}
-              {github && <span> | {github}</span>}
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="resumeSection">
-        <h2>Experience</h2>
-        <p>Experience Placeholder</p>
-        <button>Add Experience</button>
-        <br />
-      </div>
-      <div className="resumeSection">
-        <h2>Education</h2>
-        <p>Education Placeholder</p>
-        <button>Add Education</button>
-        <br />
-      </div>
-      <div className="resumeSection">
-        <h2>Skills</h2>
-        <p>Skill Placeholder</p>
-        <button>Add Skill</button>
-        <br />
-      </div>
-      <br />
-      <button>Export</button>
-    </div>
-  );
+data = {
+    "experience": [
+        Experience(
+            id=0,
+            title="Software Developer",
+            company="A Cool Company",
+            start_date="October 2022",
+            end_date="Present",
+            description="Writing Python Code",
+            logo="example-logo.png"
+        )
+    ],
+    "education": [
+        Education(
+            id=0,
+            course="Computer Science",
+            school="University of Tech",
+            start_date="September 2019",
+            end_date="July 2022",
+            grade="80%",
+            logo="example-logo.png"
+        )
+    ],
+    "skill": [
+        Skill(
+            id=0,
+            name="Python",
+            proficiency="1-2 Years",
+            logo="example-logo.png"
+        )
+    ],
+    "contact": None
 }
 
-export default App;
+
+@app.route('/test')
+def hello_world():
+    """
+    Returns a JSON test message
+    """
+    return jsonify({"message": "Hello, World!"})
+
+
+@app.route('/resume/experience', methods=['GET', 'POST'])
+def experience():
+    """Handles GET and POST for experience."""
+    if request.method == 'GET':
+        return jsonify([
+            {k: v for k, v in exp.__dict__.items() if k != "id"}
+            for exp in data["experience"]
+        ])
+
+    if request.method == 'POST':
+        exp_data = request.get_json()
+        new_id = len(data["experience"])
+        new_exp = Experience(id=new_id, **exp_data)
+        data["experience"].append(new_exp)
+        return jsonify({"id": new_id}), 201
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+
+@app.route('/resume/education', methods=['GET', 'POST'])
+def education():
+    """Handles GET and POST for education."""
+    if request.method == 'GET':
+        return jsonify([
+            {k: v for k, v in edu.__dict__.items() if k != "id"}
+            for edu in data["education"]
+        ])
+
+    if request.method == 'POST':
+        edu_data = request.get_json()
+        new_id = len(data["education"])
+        new_edu = Education(id=new_id, **edu_data)
+        data["education"].append(new_edu)
+        return jsonify({"id": new_id}), 201
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+
+@app.route('/resume/skill', methods=['GET', 'POST'])
+def skill():
+    """Handles GET and POST for skill."""
+    if request.method == 'GET':
+        return jsonify([
+            {k: v for k, v in s.__dict__.items() if k != "id"}
+            for s in data["skill"]
+        ])
+
+    if request.method == 'POST':
+        skill_data = request.get_json()
+        new_id = len(data["skill"])
+        new_skill = Skill(id=new_id, **skill_data)
+        data["skill"].append(new_skill)
+        return jsonify({"id": new_id}), 201
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+
+@app.route('/resume/education/<int:education_id>', methods=['GET'])
+def get_education_by_id(education_id):
+    """Returns one education entry by ID."""
+    for edu in data["education"]:
+        if edu.id == education_id:
+            return jsonify(edu.__dict__), 200
+
+    return jsonify({"error": "Education not found"}), 404
+
+
+@app.route('/contact', methods=['GET', 'POST', 'PUT'])
+def contact():
+    """Handles GET, POST, and PUT for contact."""
+    if request.method == 'GET':
+        if data["contact"]:
+            return jsonify(data["contact"].__dict__), 200
+        return jsonify({"error": "Contact not found"}), 404
+
+    if request.method == 'POST':
+        contact_data = request.get_json()
+        data["contact"] = Contact(**contact_data)
+        return jsonify({"message": "Contact created"}), 201
+
+    if request.method == 'PUT':
+        contact_data = request.get_json()
+        if data["contact"]:
+            data["contact"] = Contact(**contact_data)
+            return jsonify({"message": "Contact updated"}), 200
+        return jsonify({"error": "Contact not found"}), 404
+
+    return jsonify({"error": "Method not allowed"}), 405
