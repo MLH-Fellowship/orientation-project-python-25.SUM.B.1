@@ -137,3 +137,23 @@ def test_validate_phone_invalid():
         github="https://github.com/johndoe"
     )
     assert contact.validate_phone() is False
+
+
+def test_contact_post_and_get():
+    '''Test POST and GET for /contact endpoint'''
+    example_contact = {
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "phone": "+19876543210",
+        "linkedin": "https://linkedin.com/in/janesmith",
+        "github": "https://github.com/janesmith"
+    }
+    # POST the contact
+    post_response = app.test_client().post('/contact', json=example_contact)
+    assert post_response.status_code == 201
+    assert post_response.json["message"] == "Contact created"
+
+    # GET the contact
+    get_response = app.test_client().get('/contact')
+    assert get_response.status_code == 200
+    assert get_response.json == example_contact
