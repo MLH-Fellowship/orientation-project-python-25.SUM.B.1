@@ -151,7 +151,7 @@ def test_contact_post_and_get():
     # POST the contact
     post_response = app.test_client().post('/contact', json=example_contact)
     assert post_response.status_code == 201
-    assert post_response.json["message"] == "Contact created"
+    assert post_response.json == example_contact
 
     # GET the contact
     get_response = app.test_client().get('/contact')
