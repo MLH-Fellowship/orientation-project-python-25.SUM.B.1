@@ -16,7 +16,6 @@ class Experience:
     end: str
     description: str
     logo: str
-    
     def serialize(self):
         """return the  experience data as a dictionary""" 
 
