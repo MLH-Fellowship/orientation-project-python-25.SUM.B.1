@@ -74,6 +74,7 @@ def test_skill():
     assert response.json[item_id] == example_skill
 
 def test_update_skill():
+    """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
     new_skill = {
         "name": "Python",
         "proficiency": "2 years",
@@ -93,4 +94,3 @@ def test_update_skill():
     assert response.json['name'] == updated_skill['name']
     assert response.json['proficiency'] == updated_skill['proficiency']
     assert response.json['logo'] == updated_skill['logo']
-    

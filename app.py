@@ -104,7 +104,7 @@ def skill():
         new_skill = Skill(id=new_id, **skill_data)
         data["skill"].append(new_skill)
         return jsonify({"id": new_id}), 201
-    
+
     if request.method == 'PUT':
         return jsonify({})
 
@@ -131,6 +131,6 @@ def edit_skill(skill_id):
         new_skill.proficiency = skill_data.get('proficiency', new_skill.proficiency)
         new_skill.logo = skill_data.get('logo', new_skill.logo)
         return jsonify(new_skill.__dict__), 200
-    
+
     return jsonify({"error": "Skill not found"}), 404
     
