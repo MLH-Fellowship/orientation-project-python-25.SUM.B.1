@@ -186,7 +186,7 @@ def test_get_skill_by_id():
     get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
-    
+
 def test_update_skill():
     """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
     new_skill = {
