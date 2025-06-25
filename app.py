@@ -83,14 +83,7 @@ def experience():
             for exp in data["experience"]
         ])
 
-    if request.method == 'POST':
-        exp_data = request.get_json()
-        new_id = len(data["experience"])
-        new_exp = Experience(id=new_id, **exp_data)
-        data["experience"].append(new_exp)
-        return jsonify({"id": new_id}), 201
-
-    return jsonify({"error": "Method not allowed"}), 405
+    
 
 
 

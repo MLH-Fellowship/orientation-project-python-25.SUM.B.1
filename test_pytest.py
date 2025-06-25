@@ -55,34 +55,64 @@ def test_get_specific_experience():
     assert inserted_exp["description"] == example_experience["description"]
     assert inserted_exp["logo"] == example_experience["logo"]
 
-# def test_education():
-#     '''Add a new education and then get all educations.
-#     Check that it returns the new education in that list'''
-#     example_education = {
-#         "course": "Engineering",
-#         "school": "NYU",
-#         "start_date": "October 2022",
-#         "end_date": "August 2024",
-#         "grade": "86%",
-#         "logo": "example-logo.png"
-#     }
-#     item_id = app.test_client().post('/resume/education',
-#                                      json=example_education).json['id']
-#
-#     response = app.test_client().get('/resume/education')
-#     assert response.json[item_id] == example_education
+def test_education():
+    '''
+    Add a new education and then get all education entries.
+    Check that it returns the new education in that list.
+    '''
+    example_education = {
+        "course": "Engineering",
+        "school": "NYU",
+        "start_date": "October 2022",
+        "end_date": "August 2024",
+        "grade": "86%",
+        "logo": "example-logo.png"
+    }
 
-# def test_skill():
-#     '''Add a new skill and then get all skills.
-#     Check that it returns the new skill in that list'''
-#     example_skill = {
-#         "name": "JavaScript",
-#         "proficiency": "2-4 years",
-#         "logo": "example-logo.png"
-#     }
-#
-#     item_id = app.test_client().post('/resume/skill',
-#                                      json=example_skill).json['id']
-#
-#     response = app.test_client().get('/resume/skill')
-#     assert response.json[item_id] == example_skill
+    client = app.test_client()
+
+    # POST the new education
+    post_response = client.post('/resume/education', json=example_education)
+    assert post_response.status_code == 201
+    edu_id = post_response.json['id']
+
+    # GET all education entries
+    get_response = client.get('/resume/education')
+    assert get_response.status_code == 200
+    education_list = get_response.json
+
+    inserted_edu = education_list[edu_id]
+    assert inserted_edu["course"] == example_education["course"]
+    assert inserted_edu["school"] == example_education["school"]
+    assert inserted_edu["start_date"] == example_education["start_date"]
+    assert inserted_edu["end_date"] == example_education["end_date"]
+    assert inserted_edu["grade"] == example_education["grade"]
+    assert inserted_edu["logo"] == example_education["logo"]
+
+def test_skill():
+    '''
+    Add a new skill and then get all skills.
+    Check that it returns the new skill in that list.
+    '''
+    example_skill = {
+        "name": "JavaScript",
+        "proficiency": "2-4 years",
+        "logo": "example-logo.png"
+    }
+
+    client = app.test_client()
+
+    # POST the new skill
+    post_response = client.post('/resume/skill', json=example_skill)
+    assert post_response.status_code == 201
+    skill_id = post_response.json['id']
+
+    # GET all skills and confirm the one we added exists at the correct index
+    get_response = client.get('/resume/skill')
+    assert get_response.status_code == 200
+    skills = get_response.json
+
+    inserted_skill = skills[skill_id]
+    assert inserted_skill["name"] == example_skill["name"]
+    assert inserted_skill["proficiency"] == example_skill["proficiency"]
+    assert inserted_skill["logo"] == example_skill["logo"]
