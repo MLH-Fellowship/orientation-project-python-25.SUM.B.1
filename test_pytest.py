@@ -73,6 +73,51 @@ def test_skill():
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
 
+def test_get_all_education():
+    '''
+    Checks if all education entries can test GET.
+    '''
+    client = app.test_client()
+    response = client.get('/resume/education')
+
+    assert response.status_code == 200
+    education_list = response.get_json()
+    assert isinstance(education_list, list)
+
+    if education_list:
+        assert "course" in education_list[0]
+        assert "school" in education_list[0]
+
+def test_get_all_experience():
+    '''
+    Checks if all experience entries can test using GET.
+    '''
+    client = app.test_client()
+    response = client.get('/resume/experience')
+
+    assert response.status_code == 200
+    experience_list = response.get_json()
+    assert isinstance(experience_list, list)
+
+    if experience_list:
+        assert "title" in experience_list[0]
+        assert "company" in experience_list[0]
+
+def test_get_all_skills():
+    '''
+    Checks if all skill entries can test GET.
+    '''
+    client = app.test_client()
+    response = client.get('/resume/skill')
+
+    assert response.status_code == 200
+    skill_list = response.get_json()
+    assert isinstance(skill_list, list)
+
+    if skill_list:
+        assert "name" in skill_list[0]
+        assert "proficiency" in skill_list[0]
+
 def test_get_education_by_id():
     '''
     Adds a new education entry (POST)
