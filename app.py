@@ -77,15 +77,7 @@ def experience():
         index = len(data["experience"]) - 1
         return jsonify({"index": index}), 201
 
-    if request.method == 'GET':
-        return jsonify([
-            {k: v for k, v in exp.__dict__.items() if k != "id"}
-            for exp in data["experience"]
-        ])
-
-    
-
-
+    return jsonify({"error": "Method not allowed"})
 
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
