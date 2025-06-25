@@ -89,7 +89,7 @@ def education():
     return jsonify({"error": "Method not allowed"}), 405
 
 
-@app.route('/resume/skill', methods=['GET', 'POST'])
+@app.route('/resume/skill', methods=['GET', 'POST','PUT'])
 def skill():
     '''Handles GET and POST for skill.'''
     if request.method == 'GET':
@@ -104,6 +104,10 @@ def skill():
         new_skill = Skill(id=new_id, **skill_data)
         data["skill"].append(new_skill)
         return jsonify({"id": new_id}), 201
+    
+    if request.method == 'PUT':
+
+        return jsonify({})
 
     return jsonify({"error": "Method not allowed"}), 405
 
@@ -116,3 +120,17 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
+
+#Update Exisitng Skill by Index
+@app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
+def edit_skill(skill_id):
+
+    if 0 <= skill_id < len(data["skill"]):
+        skill_data = request.json
+        new_skill = data["skill"][skill_id]
+        new_skill.name = skill_data.get('name', new_skill.name)
+        new_skill.proficiency = skill_data.get('proficiency', new_skill.proficiency)
+        new_skill.logo = skill_data.get('logo', new_skill.logo)
+        return jsonify(new_skill.__dict__), 200
+    else:
+        return jsonify({"error": "Skill not found"}), 404

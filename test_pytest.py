@@ -72,3 +72,24 @@ def test_skill():
 
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
+
+def test_update_skill():
+    new_skill = {
+        "name": "Python",
+        "proficiency": "2 years",
+        "logo": "example-logo.png"
+    }
+
+    skill_id = app.test_client().post('/resume/skill', json=new_skill).json['id']
+
+    updated_skill = {
+        "name": "C++",
+        "proficiency": "3 years",
+        "logo": "updated-logo.png"
+    }
+
+    response = app.test_client().put(f'/resume/skill/{skill_id}', json=updated_skill)
+    assert response.status_code == 200
+    assert response.json['name'] == updated_skill['name']
+    assert response.json['proficiency'] == updated_skill['proficiency']
+    assert response.json['logo'] == updated_skill['logo']
