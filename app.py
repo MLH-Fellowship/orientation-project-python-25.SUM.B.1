@@ -46,15 +46,15 @@ data = {
 
 @app.route('/test')
 def hello_world():
-    """
+    '''
     Returns a JSON test message
-    """
+    '''
     return jsonify({"message": "Hello, World!"})
 
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
-    """Handles GET and POST for experience."""
+    '''Handles GET and POST for experience.'''
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in exp.__dict__.items() if k != "id"}
@@ -73,7 +73,7 @@ def experience():
 
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
-    """Handles GET and POST for education."""
+    '''Handles GET and POST for education.'''
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in edu.__dict__.items() if k != "id"}
@@ -92,7 +92,7 @@ def education():
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
-    """Handles GET and POST for skill."""
+    '''Handles GET and POST for skill.'''
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in s.__dict__.items() if k != "id"}
@@ -111,7 +111,7 @@ def skill():
 
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
-    """Returns one education entry by ID."""
+    '''Returns one education entry by ID.'''
     for edu in data["education"]:
         if edu.id == education_id:
             return jsonify(edu.__dict__), 200
