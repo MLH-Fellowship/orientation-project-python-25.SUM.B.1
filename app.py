@@ -89,7 +89,7 @@ def education():
     return jsonify({"error": "Method not allowed"}), 405
 
 
-@app.route('/resume/skill', methods=['GET', 'POST','PUT'])
+@app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
     '''Handles GET and POST for skill.'''
     if request.method == 'GET':
@@ -104,9 +104,6 @@ def skill():
         new_skill = Skill(id=new_id, **skill_data)
         data["skill"].append(new_skill)
         return jsonify({"id": new_id}), 201
-
-    if request.method == 'PUT':
-        return jsonify({})
 
     return jsonify({"error": "Method not allowed"}), 405
 
