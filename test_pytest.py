@@ -93,3 +93,4 @@ def test_update_skill():
     assert response.json['name'] == updated_skill['name']
     assert response.json['proficiency'] == updated_skill['proficiency']
     assert response.json['logo'] == updated_skill['logo']
+    
