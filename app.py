@@ -11,14 +11,15 @@ CORS(app)
 
 data = {
     "experience": [
-    Experience(
-        "Software Developer",
-        "A Cool Company",
-        "October 2022",
-        "Present",
-        "Writing Python Code",
-        "example-logo.png"
-    )
+        Experience(
+            id=0,
+            title="Software Developer",
+            company="A Cool Company",
+            start_date="October 2022",
+            end_date="Present",
+            description="Writing Python Code",
+            logo="example-logo.png"
+        )
 ],
     "education": [
         Education(
@@ -55,29 +56,27 @@ def get_experience_by_id(idx):
     """GET and POST requests for experience entries."""
 
     if 0 <= idx < len(data["experience"]):
-        return jsonify(data["experience"][idx].serialize())
+        return jsonify(data["experience"][idx])
     return jsonify({"error": "Experience not found"}), 404
+
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
-    """Handles listing all experiences and adding a new experience entry."""
+    '''Handles GET and POST for experience.'''
     if request.method == 'GET':
-        return jsonify([exp.serialize() for exp in data['experience']])
+        return jsonify([
+            {k: v for k, v in exp.__dict__.items() if k != "id"}
+            for exp in data["experience"]
+        ])
 
     if request.method == 'POST':
-        new_data = request.get_json()
-        new_exp = Experience(
-            new_data["role"],
-            new_data["company"],
-            new_data["start"],
-            new_data["end"],
-            new_data["description"],
-            new_data["logo"]
-        )
+        exp_data = request.get_json()
+        new_id = len(data["experience"])
+        new_exp = Experience(id=new_id, **exp_data)
         data["experience"].append(new_exp)
-        index = len(data["experience"]) - 1
-        return jsonify({"index": index}), 201
+        return jsonify({"id": new_id}), 201
 
-    return jsonify({"error": "Method not allowed"})
+    return jsonify({"error": "Method not allowed"}), 405
+
 
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
@@ -139,4 +138,3 @@ def edit_skill(skill_id):
         return jsonify(new_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
-    

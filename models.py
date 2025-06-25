@@ -7,26 +7,16 @@ from dataclasses import dataclass
 
 
 @dataclass
-@dataclass
 class Experience:
-    """Experience model with job history details."""
-    role: str
+    '''Experience model with job history details.'''
+    id: int
+    title: str
     company: str
-    start: str
-    end: str
+    start_date: str
+    end_date: str
     description: str
     logo: str
-    def serialize(self):
-        """return the  experience data as a dictionary""" 
 
-        return {
-            "role": self.role,
-            "company": self.company,
-            "start": self.start,
-            "end": self.end,
-            "description": self.description,
-            "logo": self.logo
-        }
 
 @dataclass
 class Education:
