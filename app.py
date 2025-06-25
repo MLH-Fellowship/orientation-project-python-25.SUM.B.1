@@ -116,3 +116,18 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
+
+#Update Exisitng Skill by Index
+@app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
+def edit_skill(skill_id):
+    """Updates an existing skill by its ID (index) with provided JSON data."""
+    if 0 <= skill_id < len(data["skill"]):
+        skill_data = request.json
+        new_skill = data["skill"][skill_id]
+        new_skill.name = skill_data.get('name', new_skill.name)
+        new_skill.proficiency = skill_data.get('proficiency', new_skill.proficiency)
+        new_skill.logo = skill_data.get('logo', new_skill.logo)
+        return jsonify(new_skill.__dict__), 200
+
+    return jsonify({"error": "Skill not found"}), 404
+    
