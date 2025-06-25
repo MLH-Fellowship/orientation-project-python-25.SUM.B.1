@@ -3,6 +3,7 @@
 Refer to the Fellowship LMS for information!
 
 ## Setup
+
 ```
 python3 -m venv .venv
 source .venv/bin/activate
