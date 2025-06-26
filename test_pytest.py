@@ -74,8 +74,6 @@ def test_skill():
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
 
-<<<<<<< feature/delete-skill
-=======
 
 def test_contact_creation():
     '''Test creating a contact with valid data'''
@@ -160,7 +158,7 @@ def test_contact_post_and_get():
     assert get_response.status_code == 200
     assert get_response.json == example_contact
 
->>>>>>> main
+
 def test_update_skill():
     """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
     new_skill = {
@@ -182,7 +180,7 @@ def test_update_skill():
     assert response.json['name'] == updated_skill['name']
     assert response.json['proficiency'] == updated_skill['proficiency']
     assert response.json['logo'] == updated_skill['logo']
-<<<<<<< feature/delete-skill
+
 
 def test_delete_skill():
     new_skill = {
@@ -199,5 +197,3 @@ def test_delete_skill():
 
     get_response = app.test_client().get('/resume/skill')
     assert skill_id not in get_response.json
-=======
->>>>>>> main
