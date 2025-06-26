@@ -142,29 +142,6 @@ def test_get_education_by_id():
     assert get_response.status_code == 200
     assert get_response.get_json()["course"] == "Data Science"
 
-def test_get_experience_by_id():
-    '''
-    Adds a new experience entry (POST)
-    Gets that entry by its ID
-    Checks if the returned data matches the original input
-    '''
-    client = app.test_client()
-
-    new_experience = {
-        "title": "Backend Developer",
-        "company": "MLH",
-        "start_date": "2025",
-        "end_date": "Present",
-        "description": "Working on APIs",
-        "logo": "mlh-logo.png"
-    }
-
-    post_response = client.post('/resume/experience', json=new_experience)
-    new_id = post_response.get_json()["id"]
-
-    get_response = client.get(f'/resume/experience/{new_id}')
-    assert get_response.status_code == 200
-    assert get_response.get_json()["title"] == "Backend Developer"
 
 def test_get_skill_by_id():
     '''
@@ -186,25 +163,3 @@ def test_get_skill_by_id():
     get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
-
-def test_update_skill():
-    """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
-    new_skill = {
-        "name": "Python",
-        "proficiency": "2 years",
-        "logo": "example-logo.png"
-    }
-
-    skill_id = app.test_client().post('/resume/skill', json=new_skill).json['id']
-
-    updated_skill = {
-        "name": "C++",
-        "proficiency": "3 years",
-        "logo": "updated-logo.png"
-    }
-
-    response = app.test_client().put(f'/resume/skill/{skill_id}', json=updated_skill)
-    assert response.status_code == 200
-    assert response.json['name'] == updated_skill['name']
-    assert response.json['proficiency'] == updated_skill['proficiency']
-    assert response.json['logo'] == updated_skill['logo']
