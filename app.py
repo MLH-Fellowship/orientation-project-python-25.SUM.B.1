@@ -201,7 +201,7 @@ def edit_skill(skill_id):
 
 #Delete Existing Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['DELETE'])
-
+"""Deletes an existing skill by its ID (index)."""
 def delete_skill(skill_id):
 
     if 0 <= skill_id < len(data["skill"]):
