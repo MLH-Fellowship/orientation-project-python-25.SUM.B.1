@@ -2,6 +2,7 @@
 Tests in Pytest
 '''
 from app import app
+from models import Contact
 
 
 def test_client():
@@ -73,6 +74,93 @@ def test_skill():
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
 
+<<<<<<< feature/delete-skill
+=======
+
+def test_contact_creation():
+    '''Test creating a contact with valid data'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    assert contact.name == "John Doe"
+    assert contact.email == "john.doe@example.com"
+    assert contact.phone == "+1234567890"
+    assert contact.linkedin == "https://linkedin.com/in/johndoe"
+    assert contact.github == "https://github.com/johndoe"
+
+
+def test_validate_email_valid():
+    '''Test email validation with valid email'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    assert contact.validate_email() is True
+
+
+def test_validate_email_invalid():
+    '''Test email validation with invalid email'''
+    contact = Contact(
+        name="John Doe",
+        email="invalid-email",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    assert contact.validate_email() is False
+
+
+def test_validate_phone_valid():
+    '''Test phone validation with valid international format'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="+1234567890",
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    assert contact.validate_phone() is True
+
+
+def test_validate_phone_invalid():
+    '''Test phone validation with invalid format'''
+    contact = Contact(
+        name="John Doe",
+        email="john.doe@example.com",
+        phone="1234567890",  # Missing + sign
+        linkedin="https://linkedin.com/in/johndoe",
+        github="https://github.com/johndoe"
+    )
+    assert contact.validate_phone() is False
+
+
+def test_contact_post_and_get():
+    '''Test POST and GET for /contact endpoint'''
+    example_contact = {
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "phone": "+19876543210",
+        "linkedin": "https://linkedin.com/in/janesmith",
+        "github": "https://github.com/janesmith"
+    }
+    # POST the contact
+    post_response = app.test_client().post('/contact', json=example_contact)
+    assert post_response.status_code == 201
+    assert post_response.json == example_contact
+
+    # GET the contact
+    get_response = app.test_client().get('/contact')
+    assert get_response.status_code == 200
+    assert get_response.json == example_contact
+
+>>>>>>> main
 def test_update_skill():
     """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
     new_skill = {
@@ -94,6 +182,7 @@ def test_update_skill():
     assert response.json['name'] == updated_skill['name']
     assert response.json['proficiency'] == updated_skill['proficiency']
     assert response.json['logo'] == updated_skill['logo']
+<<<<<<< feature/delete-skill
 
 def test_delete_skill():
     new_skill = {
@@ -110,3 +199,5 @@ def test_delete_skill():
 
     get_response = app.test_client().get('/resume/skill')
     assert skill_id not in get_response.json
+=======
+>>>>>>> main
