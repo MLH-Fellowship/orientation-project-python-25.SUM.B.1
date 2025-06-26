@@ -183,6 +183,7 @@ def test_update_skill():
 
 
 def test_delete_skill():
+    """Tests the DELETE /resume/skill/<skill_id> endpoint."""
     new_skill = {
         "name": "C++",
         "proficiency": "4 years",
