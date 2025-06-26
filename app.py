@@ -201,9 +201,8 @@ def edit_skill(skill_id):
 
 #Delete Existing Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['DELETE'])
-"""Deletes an existing skill by its ID (index)."""
 def delete_skill(skill_id):
-
+    """Deletes an existing skill by its ID (index)."""
     if 0 <= skill_id < len(data["skill"]):
         deleted_skill = data["skill"].pop(skill_id)
         return jsonify(deleted_skill.__dict__), 200
