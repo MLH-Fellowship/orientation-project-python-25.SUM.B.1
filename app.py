@@ -118,8 +118,7 @@ def get_education_by_id(education_id):
 
     return jsonify({"error": "Education not found"}), 404
 
-<<<<<<< feature/delete-skill
-=======
+
 @app.route('/contact', methods=['GET', 'POST', 'PUT'])
 def contact():
     '''Handles GET, POST, and PUT for contact information.'''
@@ -184,7 +183,7 @@ def contact():
 
     return jsonify(response_data), status_code
 
->>>>>>> main
+
 #Update Exisitng Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
 def edit_skill(skill_id):
@@ -198,7 +197,7 @@ def edit_skill(skill_id):
         return jsonify(new_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
-<<<<<<< feature/delete-skill
+
 
 #Delete Existing Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['DELETE'])
@@ -210,5 +209,3 @@ def delete_skill(skill_id):
         return jsonify(deleted_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
-=======
->>>>>>> main
