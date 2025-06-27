@@ -8,7 +8,6 @@ from models import Experience, Education, Skill, Contact
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-
 data = {
     "experience": [
         Experience(
@@ -20,7 +19,7 @@ data = {
             description="Writing Python Code",
             logo="example-logo.png"
         )
-    ],
+],
     "education": [
         Education(
             id=0,
@@ -43,7 +42,6 @@ data = {
     "contact": None
 }
 
-
 @app.route('/test')
 def hello_world():
     '''
@@ -51,6 +49,13 @@ def hello_world():
     '''
     return jsonify({"message": "Hello, World!"})
 
+@app.route('/resume/experience/<int:idx>', methods=['GET'])
+def get_experience_by_id(idx):
+    """GET and POST requests for experience entries."""
+
+    if 0 <= idx < len(data["experience"]):
+        return jsonify(data["experience"][idx])
+    return jsonify({"error": "Experience not found"}), 404
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
@@ -70,7 +75,6 @@ def experience():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
     '''Handles GET and POST for education.'''
@@ -88,7 +92,6 @@ def education():
         return jsonify({"id": new_id}), 201
 
     return jsonify({"error": "Method not allowed"}), 405
-
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
@@ -108,7 +111,6 @@ def skill():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
     '''Returns one education entry by ID.'''
@@ -117,7 +119,6 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
-
 
 @app.route('/resume/skill/<int:skill_id>', methods=['GET'])
 def get_skill_by_id(skill_id):
@@ -192,7 +193,6 @@ def contact():
 
     return jsonify(response_data), status_code
 
-
 #Update Exisitng Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
 def edit_skill(skill_id):
@@ -206,7 +206,6 @@ def edit_skill(skill_id):
         return jsonify(new_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
-
 
 #Delete Existing Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['DELETE'])
