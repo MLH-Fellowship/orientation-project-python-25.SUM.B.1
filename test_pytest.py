@@ -1,5 +1,5 @@
 '''
-Tests in Pytest
+Tests in Pytest - FIXED VERSION
 '''
 from app import app
 
@@ -20,18 +20,43 @@ def test_experience():
     Check that it returns the new experience in that list
     '''
     example_experience = {
-        "title": "Software Developer",
-        "company": "A Cooler Company",
-        "start_date": "October 2022",
+        "title": "Frontend",
+        "company": "Twitter",
+        "start_date": "June 2025",
         "end_date": "Present",
         "description": "Writing JavaScript Code",
         "logo": "example-logo.png"
     }
 
+    # POST to add new experience
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
+    
+    # GET individual experience by ID (fixed URL)
+    response = app.test_client().get(f'/resume/experience/{item_id}')
+    assert response.status_code == 200
+    
+    # The individual GET returns the full object including ID
+    returned_experience = response.json
+    
+    # Check each field (excluding ID since it's auto-generated)
+    for key, value in example_experience.items():
+        assert returned_experience[key] == value
+
+
+def test_experience_list():
+    '''
+    Test getting all experiences as a list
+    '''
+    # GET all experiences
     response = app.test_client().get('/resume/experience')
-    assert response.json[item_id] == example_experience
+    assert response.status_code == 200
+    
+    # Should return a list
+    assert isinstance(response.json, list)
+    
+    # Should have at least the default experience
+    assert len(response.json) >= 1
 
 
 def test_education():
@@ -48,11 +73,17 @@ def test_education():
         "grade": "86%",
         "logo": "example-logo.png"
     }
+    
+    # POST to add new education
     item_id = app.test_client().post('/resume/education',
                                      json=example_education).json['id']
 
+    # GET all education entries
     response = app.test_client().get('/resume/education')
-    assert response.json[item_id] == example_education
+    assert response.status_code == 200
+    
+    # Check that our new education is in the list (without ID)
+    assert example_education in response.json
 
 
 def test_skill():
@@ -67,11 +98,17 @@ def test_skill():
         "logo": "example-logo.png"
     }
 
+    # POST to add new skill
     item_id = app.test_client().post('/resume/skill',
                                      json=example_skill).json['id']
 
+    # GET all skills
     response = app.test_client().get('/resume/skill')
-    assert response.json[item_id] == example_skill
+    assert response.status_code == 200
+    
+    # Check that our new skill is in the list (without ID)
+    assert example_skill in response.json
+
 
 def test_update_skill():
     """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
