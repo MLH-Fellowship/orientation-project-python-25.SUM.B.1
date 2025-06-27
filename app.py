@@ -220,7 +220,7 @@ def delete_skill(skill_id):
 
 @app.route('/resume/education/<int:edu_id>', methods=['DELETE'])
 def delete_education(edu_id):
-     '''Deletes an education by its index (ID).'''
+    '''Deletes an education by its index (ID).'''
     if 0 <= edu_id < len(data["education"]):
         del data["education"][edu_id]
         return jsonify({"message": f"Education with id {edu_id} deleted."}), 200
