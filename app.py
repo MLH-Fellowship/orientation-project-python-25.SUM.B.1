@@ -124,6 +124,9 @@ def get_skill_by_id(skill_id):
     for s in data["skill"]:
         if s.id == skill_id:
             return jsonify(s.__dict__), 200
+    
+    return jsonify({"error": "Skill not found"}), 404
+
 @app.route('/contact', methods=['GET', 'POST', 'PUT'])
 def contact():
     '''Handles GET, POST, and PUT for contact information.'''

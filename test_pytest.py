@@ -16,8 +16,8 @@ def test_client():
 
 def test_experience():
     '''
-    Add a new experience and then get all experiences. 
-    
+    Add a new experience and then get all experiences.
+
     Check that it returns the new experience in that list
     '''
     example_experience = {
@@ -37,8 +37,8 @@ def test_experience():
 
 def test_education():
     '''
-    Add a new education and then get all educations. 
-    
+    Add a new education and then get all educations.
+
     Check that it returns the new education in that list
     '''
     example_education = {
@@ -58,8 +58,8 @@ def test_education():
 
 def test_skill():
     '''
-    Add a new skill and then get all skills. 
-    
+    Add a new skill and then get all skills.
+
     Check that it returns the new skill in that list
     '''
     example_skill = {
@@ -134,6 +134,14 @@ def test_get_education_by_id():
         "end_date": "2026",
         "grade": "90%",
         "logo": "cuny-logo.jpeg"
+    }
+    
+    post_response = client.post('/resume/education', json=new_education)
+    new_id = post_response.get_json()["id"]
+
+    get_response = client.get(f'/resume/education/{new_id}')
+    assert get_response.status_code == 200
+    assert get_response.get_json()["course"] == "Data Science"
 
 def test_contact_creation():
     '''Test creating a contact with valid data'''
@@ -220,18 +228,34 @@ def test_contact_post_and_get():
 
 def test_update_skill():
     """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
+    client = app.test_client()
+    
+    # First create a new skill
     new_skill = {
         "name": "Python",
         "proficiency": "2 years",
         "logo": "example-logo.png"
     }
-
-    post_response = client.post('/resume/education', json=new_education)
+    
+    # Post the skill to create it
+    post_response = client.post('/resume/skill', json=new_skill)
     new_id = post_response.get_json()["id"]
-
-    get_response = client.get(f'/resume/education/{new_id}')
+    
+    # Update the skill
+    updated_skill = {
+        "name": "Python",
+        "proficiency": "5 years",  # Changed proficiency
+        "logo": "example-logo.png"
+    }
+    
+    # Put the updated skill
+    put_response = client.put(f'/resume/skill/{new_id}', json=updated_skill)
+    assert put_response.status_code == 200
+    
+    # Get the skill to verify it was updated
+    get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
-    assert get_response.get_json()["course"] == "Data Science"
+    assert get_response.get_json()["proficiency"] == "5 years"
 
 
 def test_get_skill_by_id():
