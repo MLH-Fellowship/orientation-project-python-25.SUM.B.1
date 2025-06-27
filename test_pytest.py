@@ -297,3 +297,39 @@ def test_get_skill_by_id():
     get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
+
+def test_edit_education():
+    '''Test updating an education by ID'''
+    # Add a new education to ensure there is one to update
+    example_education = {
+        "course": "Test Course",
+        "school": "Test School",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "grade": "100%",
+        "logo": "example-logo.png"
+    }
+    post_response = app.test_client().post('/resume/education', json=example_education)
+    edu_id = post_response.json['id']
+
+    # Update the education
+    updated_education = {
+        "course": "Updated Course",
+        "school": "Updated School",
+        "start_date": "Feb 2025",
+        "end_date": "Nov 2025",
+        "grade": "99%",
+        "logo": "updated-logo.png"
+    }
+    put_response = app.test_client().put(f'/resume/education/{edu_id}', json=updated_education)
+    assert put_response.status_code == 200
+    expected_education = updated_education.copy()
+    expected_education["id"] = edu_id
+    assert put_response.json == expected_education
+
+    # Get all educations and ensure the updated one is present
+    get_response = app.test_client().get('/resume/education')
+    educations = get_response.json
+    expected_education_no_id = expected_education.copy()
+    expected_education_no_id.pop("id")
+    assert expected_education_no_id in educations
