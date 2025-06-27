@@ -297,3 +297,27 @@ def test_get_skill_by_id():
     get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
+
+def test_delete_education():
+    '''Test deleting an education by ID'''
+    # Add a new education to ensure there is one to delete
+    example_education = {
+        "course": "Test Course",
+        "school": "Test School",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "grade": "100%",
+        "logo": "example-logo.png"
+    }
+    post_response = app.test_client().post('/resume/education', json=example_education)
+    edu_id = post_response.json['id']
+
+    # Delete the education
+    delete_response = app.test_client().delete(f'/resume/education/{edu_id}')
+    assert delete_response.status_code == 200
+    assert delete_response.json["message"] == f"Education with id {edu_id} deleted."
+
+    # Try to get all educations and ensure the deleted one is not present
+    get_response = app.test_client().get('/resume/education')
+    educations = get_response.json
+    assert example_education not in educations
