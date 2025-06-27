@@ -248,7 +248,7 @@ def test_update_skill():
         "proficiency": "5 years",  # Changed proficiency
         "logo": "example-logo.png"
     }
-        
+
     # Put the updated skill
     put_response = client.put(f'/resume/skill/{new_id}', json=updated_skill)
     assert put_response.status_code == 200
