@@ -217,3 +217,11 @@ def delete_skill(skill_id):
         return jsonify(deleted_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
+
+@app.route('/resume/experience/<int:exp_id>', methods=['DELETE'])
+def delete_experience(exp_id):
+    '''Deletes an experience by its index (ID).'''
+    if 0 <= exp_id < len(data["experience"]):
+        del data["experience"][exp_id]
+        return jsonify({"message": f"Experience with id {exp_id} deleted."}), 200
+    return jsonify({"error": "Experience not found"}), 404
