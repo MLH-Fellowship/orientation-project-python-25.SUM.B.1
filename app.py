@@ -217,3 +217,17 @@ def delete_skill(skill_id):
         return jsonify(deleted_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
+@app.route('/resume/experience/<int:exp_id>', methods=['PUT'])
+def edit_experience(exp_id):
+    '''Updates an existing experience by its ID (index) with provided JSON data.'''
+    if 0 <= exp_id < len(data["experience"]):
+        exp_data = request.json
+        exp = data["experience"][exp_id]
+        exp.title = exp_data.get('title', exp.title)
+        exp.company = exp_data.get('company', exp.company)
+        exp.start_date = exp_data.get('start_date', exp.start_date)
+        exp.end_date = exp_data.get('end_date', exp.end_date)
+        exp.description = exp_data.get('description', exp.description)
+        exp.logo = exp_data.get('logo', exp.logo)
+        return jsonify(exp.__dict__), 200
+    return jsonify({"error": "Experience not found"}), 404
