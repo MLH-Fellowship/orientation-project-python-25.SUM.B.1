@@ -297,3 +297,28 @@ def test_get_skill_by_id():
     get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
+
+def test_delete_experience():
+    '''Test deleting an experience by ID'''
+    # Add a new experience to ensure there is one to delete
+    example_experience = {
+        "title": "Test Developer",
+        "company": "Test Company",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "description": "Testing delete endpoint",
+        "logo": "example-logo.png"
+    }
+    post_response = app.test_client().post('/resume/experience', json=example_experience)
+    exp_id = post_response.json['id']
+
+    # Delete the experience
+    delete_response = app.test_client().delete(f'/resume/experience/{exp_id}')
+    assert delete_response.status_code == 200
+    assert delete_response.json["message"] == f"Experience with id {exp_id} deleted."
+
+    # Try to get all experiences and ensure the deleted one is not present
+    get_response = app.test_client().get('/resume/experience')
+    experiences = get_response.json
+    # Since the API returns a list of dicts without IDs, check by content
+    assert example_experience not in experiences
