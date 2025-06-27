@@ -119,6 +119,15 @@ def get_education_by_id(education_id):
     return jsonify({"error": "Education not found"}), 404
 
 
+@app.route('/resume/skill/<int:skill_id>', methods=['GET'])
+def get_skill_by_id(skill_id):
+    '''Returns one skill entry by ID.'''
+    for s in data["skill"]:
+        if s.id == skill_id:
+            return jsonify(s.__dict__), 200
+
+    return jsonify({"error": "Skill not found"}), 404
+
 @app.route('/contact', methods=['GET', 'POST', 'PUT'])
 def contact():
     '''Handles GET, POST, and PUT for contact information.'''
