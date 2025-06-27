@@ -226,6 +226,7 @@ def test_contact_post_and_get():
     assert get_response.status_code == 200
     assert get_response.json == example_contact
 
+
 def test_update_skill():
     """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
     client = app.test_client()
@@ -257,6 +258,24 @@ def test_update_skill():
     assert get_response.status_code == 200
     assert get_response.get_json()["proficiency"] == "5 years"
 
+
+
+def test_delete_skill():
+    """Tests the DELETE /resume/skill/<skill_id> endpoint."""
+    new_skill = {
+        "name": "C++",
+        "proficiency": "4 years",
+        "logo": "example-logo.png"
+    }
+
+    skill_id = app.test_client().post('/resume/skill', json=new_skill).json['id']
+
+    response = app.test_client().delete(f'/resume/skill/{skill_id}')
+    assert response.status_code == 200
+    assert response.json['name'] == new_skill['name']
+
+    get_response = app.test_client().get('/resume/skill')
+    assert skill_id not in get_response.json
 
 def test_get_skill_by_id():
     '''

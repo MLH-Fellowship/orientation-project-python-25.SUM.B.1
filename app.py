@@ -118,6 +118,7 @@ def get_education_by_id(education_id):
 
     return jsonify({"error": "Education not found"}), 404
 
+
 @app.route('/resume/skill/<int:skill_id>', methods=['GET'])
 def get_skill_by_id(skill_id):
     '''Returns one skill entry by ID.'''
@@ -191,6 +192,7 @@ def contact():
 
     return jsonify(response_data), status_code
 
+
 #Update Exisitng Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
 def edit_skill(skill_id):
@@ -202,5 +204,16 @@ def edit_skill(skill_id):
         new_skill.proficiency = skill_data.get('proficiency', new_skill.proficiency)
         new_skill.logo = skill_data.get('logo', new_skill.logo)
         return jsonify(new_skill.__dict__), 200
+
+    return jsonify({"error": "Skill not found"}), 404
+
+
+#Delete Existing Skill by Index
+@app.route('/resume/skill/<int:skill_id>', methods=['DELETE'])
+def delete_skill(skill_id):
+    """Deletes an existing skill by its ID (index)."""
+    if 0 <= skill_id < len(data["skill"]):
+        deleted_skill = data["skill"].pop(skill_id)
+        return jsonify(deleted_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
