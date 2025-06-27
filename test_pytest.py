@@ -297,3 +297,39 @@ def test_get_skill_by_id():
     get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
+
+def test_edit_experience():
+    '''Test updating an experience by ID'''
+    # Add a new experience to ensure there is one to update
+    example_experience = {
+        "title": "Test Developer",
+        "company": "Test Company",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "description": "Testing update endpoint",
+        "logo": "example-logo.png"
+    }
+    post_response = app.test_client().post('/resume/experience', json=example_experience)
+    exp_id = post_response.json['id']
+
+    # Update the experience
+    updated_experience = {
+        "title": "Updated Developer",
+        "company": "Updated Company",
+        "start_date": "Feb 2025",
+        "end_date": "Nov 2025",
+        "description": "Updated description",
+        "logo": "updated-logo.png"
+    }
+    put_response = app.test_client().put(f'/resume/experience/{exp_id}', json=updated_experience)
+    assert put_response.status_code == 200
+    expected_experience = updated_experience.copy()
+    expected_experience["id"] = exp_id
+    assert put_response.json == expected_experience
+
+    # Get all experiences and ensure the updated one is present
+    get_response = app.test_client().get('/resume/experience')
+    experiences = get_response.json
+    expected_experience_no_id = expected_experience.copy()
+    expected_experience_no_id.pop("id")
+    assert expected_experience_no_id in experiences
