@@ -1,5 +1,5 @@
 '''
-Tests in Pytest 
+Tests in Pytest
 '''
 from app import app
 
@@ -35,10 +35,10 @@ def test_experience():
 # GET individual experience by ID (fixed URL)
     response = app.test_client().get(f'/resume/experience/{item_id}')
     assert response.status_code == 200
-    
+
 # The individual GET returns the full object including ID
     returned_experience = response.json
-    
+
 # Check each field (excluding ID since it's auto-generated)
     for key, value in example_experience.items():
         assert returned_experience[key] == value
