@@ -218,7 +218,7 @@ def delete_skill(skill_id):
 
     return jsonify({"error": "Skill not found"}), 404
 
-@app.route('/resume/educations', methods=['GET'])
-def get_all_educations():
+@app.route('/resume/education', methods=['GET'])
+def get_all_education():
     '''Returns all education entries.'''
     return jsonify([edu.__dict__ for edu in data["education"]]), 200
