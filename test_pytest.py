@@ -135,7 +135,7 @@ def test_get_education_by_id():
         "grade": "90%",
         "logo": "cuny-logo.jpeg"
     }
-    
+
     post_response = client.post('/resume/education', json=new_education)
     new_id = post_response.get_json()["id"]
 
@@ -229,29 +229,29 @@ def test_contact_post_and_get():
 def test_update_skill():
     """Tests the PUT /resume/skill/<id> endpoint for updating a skill."""
     client = app.test_client()
-    
+
     # First create a new skill
     new_skill = {
         "name": "Python",
         "proficiency": "2 years",
         "logo": "example-logo.png"
     }
-    
+
     # Post the skill to create it
     post_response = client.post('/resume/skill', json=new_skill)
     new_id = post_response.get_json()["id"]
-    
+
     # Update the skill
     updated_skill = {
         "name": "Python",
         "proficiency": "5 years",  # Changed proficiency
         "logo": "example-logo.png"
     }
-    
+
     # Put the updated skill
     put_response = client.put(f'/resume/skill/{new_id}', json=updated_skill)
     assert put_response.status_code == 200
-    
+
     # Get the skill to verify it was updated
     get_response = client.get(f'/resume/skill/{new_id}')
     assert get_response.status_code == 200
