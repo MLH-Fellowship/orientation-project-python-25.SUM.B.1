@@ -47,10 +47,8 @@ def test_experience_list():
     response = app.test_client().get('/resume/experience')
     assert response.status_code == 200
     
-    # Should return a list
     assert isinstance(response.json, list)
     
-    # Should have at least the default experience
     assert len(response.json) >= 1
 
 def test_education():
@@ -68,15 +66,13 @@ def test_education():
         "logo": "example-logo.png"
     }
     
-    # POST to add new education
     item_id = app.test_client().post('/resume/education',
-                                     json=example_education).json['id']
+                                     json=example_education).json['item-id']
 
     # GET all education entries
     response = app.test_client().get('/resume/education')
     assert response.status_code == 200
     
-    # Check that our new education is in the list (without ID)
     assert example_education in response.json
 
 def test_skill():
@@ -93,12 +89,11 @@ def test_skill():
 
     # POST to add new skill
     item_id = app.test_client().post('/resume/skill',
-                                     json=example_skill).json['id']
+                                     json=example_skill).json['item-id']
     # GET all skills
     response = app.test_client().get('/resume/skill')
     assert response.status_code == 200
     
-    # Check that our new skill is in the list (without ID)
     assert example_skill in response.json
 
 def test_update_skill():
