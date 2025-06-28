@@ -193,6 +193,21 @@ def contact():
 
     return jsonify(response_data), status_code
 
+@app.route('/resume/education/<int:edu_id>', methods=['PUT'])
+def edit_education(edu_id):
+    '''Updates an existing education by its ID (index) with provided JSON data.'''
+    if 0 <= edu_id < len(data["education"]):
+        edu_data = request.json
+        edu = data["education"][edu_id]
+        edu.course = edu_data.get('course', edu.course)
+        edu.school = edu_data.get('school', edu.school)
+        edu.start_date = edu_data.get('start_date', edu.start_date)
+        edu.end_date = edu_data.get('end_date', edu.end_date)
+        edu.grade = edu_data.get('grade', edu.grade)
+        edu.logo = edu_data.get('logo', edu.logo)
+        return jsonify(edu.__dict__), 200
+    return jsonify({"error": "Education not found"}), 404
+
 #Update Exisitng Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
 def edit_skill(skill_id):
