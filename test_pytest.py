@@ -1,8 +1,5 @@
 '''
 Tests in Pytest
-
-Comprehensive test suite for the Resume API endpoints.
-Tests all CRUD operations and validates response formats and status codes.
 '''
 from app import app
 
