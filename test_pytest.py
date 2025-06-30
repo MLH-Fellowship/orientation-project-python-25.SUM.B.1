@@ -335,11 +335,6 @@ def test_get_skill_by_id():
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
 
-
-def test_delete_experience():
-    '''Test deleting an experience by ID'''
-    # Add a new experience to ensure there is one to delete
-
 def test_edit_experience():
     '''Test updating an experience by ID'''
     # Add a new experience to ensure there is one to update
