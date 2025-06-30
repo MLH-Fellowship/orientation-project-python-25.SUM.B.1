@@ -320,4 +320,4 @@ def test_delete_education():
     # Try to get all educations and ensure the deleted one is not present
     get_response = app.test_client().get('/resume/education')
     educations = get_response.json
-    assert example_education not in educations
+    assert all(education['id'] != edu_id for education in educations)
