@@ -1,11 +1,11 @@
-'''
-Tests in Pytest
-'''
+"""
+Tests in Pytest 
+"""
 from app import app
 
 
 def test_client():
-    '''
+    """
     Test the basic test endpoint to ensure API is running.
     
     Verifies:
@@ -14,14 +14,14 @@ def test_client():
         
     Returns:
         None: Asserts pass/fail for test validation
-    '''
+    """
     response = app.test_client().get('/test')
     assert response.status_code == 200
     assert response.json['message'] == "Hello, World!"
 
 
 def test_experience():
-    '''
+    """
     Test adding a new experience and retrieving it by ID.
     
     Verifies:
@@ -31,7 +31,7 @@ def test_experience():
         
     Returns:
         None: Asserts pass/fail for test validation
-    '''
+    """
     example_experience = {
         "title": "Software Developer",
         "company": "A Cooler Company",
@@ -58,7 +58,7 @@ def test_experience():
 
 
 def test_experience_list():
-    '''
+    """
     Test retrieving all experiences as a list.
     
     Verifies:
@@ -68,7 +68,7 @@ def test_experience_list():
         
     Returns:
         None: Asserts pass/fail for test validation
-    '''
+    """
     # GET all experiences
     response = app.test_client().get('/resume/experience')
     assert response.status_code == 200
@@ -81,7 +81,7 @@ def test_experience_list():
 
 
 def test_education():
-    '''
+    """
     Test adding a new education entry and retrieving all education entries.
     
     Verifies:
@@ -91,7 +91,7 @@ def test_education():
         
     Returns:
         None: Asserts pass/fail for test validation
-    '''
+    """
     example_education = {
         "course": "Engineering",
         "school": "NYU",
@@ -114,7 +114,7 @@ def test_education():
 
 
 def test_skill():
-    '''
+    """
     Test adding a new skill and retrieving all skills.
     
     Verifies:
@@ -124,7 +124,7 @@ def test_skill():
         
     Returns:
         None: Asserts pass/fail for test validation
-    '''
+    """
     example_skill = {
         "name": "JavaScript",
         "proficiency": "2-4 years",
@@ -162,7 +162,8 @@ def test_update_skill():
         "logo": "example-logo.png"
     }
 
-    skill_id = app.test_client().post('/resume/skill', json=new_skill).json['id']
+    skill_response = app.test_client().post('/resume/skill', json=new_skill)
+    skill_id = skill_response.json['id']
 
     updated_skill = {
         "name": "C++",
