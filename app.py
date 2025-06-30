@@ -8,7 +8,6 @@ from models import Experience, Education, Skill, Contact
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-
 data = {
     "experience": [
         Experience(
@@ -20,7 +19,7 @@ data = {
             description="Writing Python Code",
             logo="example-logo.png"
         )
-    ],
+],
     "education": [
         Education(
             id=0,
@@ -43,7 +42,6 @@ data = {
     "contact": None
 }
 
-
 @app.route('/test')
 def hello_world():
     '''
@@ -51,6 +49,13 @@ def hello_world():
     '''
     return jsonify({"message": "Hello, World!"})
 
+@app.route('/resume/experience/<int:idx>', methods=['GET'])
+def get_experience_by_id(idx):
+    """GET and POST requests for experience entries."""
+
+    if 0 <= idx < len(data["experience"]):
+        return jsonify(data["experience"][idx])
+    return jsonify({"error": "Experience not found"}), 404
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
@@ -70,7 +75,6 @@ def experience():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
     '''Handles GET and POST for education.'''
@@ -88,7 +92,6 @@ def education():
         return jsonify({"id": new_id}), 201
 
     return jsonify({"error": "Method not allowed"}), 405
-
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
@@ -108,7 +111,6 @@ def skill():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
     '''Returns one education entry by ID.'''
@@ -117,7 +119,6 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
-
 
 @app.route('/resume/skill/<int:skill_id>', methods=['GET'])
 def get_skill_by_id(skill_id):
@@ -192,6 +193,20 @@ def contact():
 
     return jsonify(response_data), status_code
 
+@app.route('/resume/education/<int:edu_id>', methods=['PUT'])
+def edit_education(edu_id):
+    '''Updates an existing education by its ID (index) with provided JSON data.'''
+    if 0 <= edu_id < len(data["education"]):
+        edu_data = request.json
+        edu = data["education"][edu_id]
+        edu.course = edu_data.get('course', edu.course)
+        edu.school = edu_data.get('school', edu.school)
+        edu.start_date = edu_data.get('start_date', edu.start_date)
+        edu.end_date = edu_data.get('end_date', edu.end_date)
+        edu.grade = edu_data.get('grade', edu.grade)
+        edu.logo = edu_data.get('logo', edu.logo)
+        return jsonify(edu.__dict__), 200
+    return jsonify({"error": "Education not found"}), 404
 
 #Update Exisitng Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
@@ -207,7 +222,6 @@ def edit_skill(skill_id):
 
     return jsonify({"error": "Skill not found"}), 404
 
-
 #Delete Existing Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['DELETE'])
 def delete_skill(skill_id):
@@ -218,6 +232,7 @@ def delete_skill(skill_id):
 
     return jsonify({"error": "Skill not found"}), 404
 
+
 @app.route('/resume/education/<int:edu_id>', methods=['DELETE'])
 def delete_education(edu_id):
     '''Deletes an education by its ID.'''
@@ -226,3 +241,18 @@ def delete_education(edu_id):
             data["education"].remove(edu)
             return jsonify({"message": f"Education with id {edu_id} deleted."}), 200
     return jsonify({"error": "Education not found"}), 404
+
+@app.route('/resume/experience/<int:exp_id>', methods=['PUT'])
+def edit_experience(exp_id):
+    '''Updates an existing experience by its ID (index) with provided JSON data.'''
+    if 0 <= exp_id < len(data["experience"]):
+        exp_data = request.json
+        exp = data["experience"][exp_id]
+        exp.title = exp_data.get('title', exp.title)
+        exp.company = exp_data.get('company', exp.company)
+        exp.start_date = exp_data.get('start_date', exp.start_date)
+        exp.end_date = exp_data.get('end_date', exp.end_date)
+        exp.description = exp_data.get('description', exp.description)
+        exp.logo = exp_data.get('logo', exp.logo)
+        return jsonify(exp.__dict__), 200
+    return jsonify({"error": "Experience not found"}), 404
