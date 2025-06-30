@@ -335,33 +335,22 @@ def test_get_skill_by_id():
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
 
+
 def test_edit_experience():
     '''Test updating an experience by ID'''
     # Add a new experience to ensure there is one to update
-
     example_experience = {
         "title": "Test Developer",
         "company": "Test Company",
         "start_date": "Jan 2025",
         "end_date": "Dec 2025",
-        "description": "Testing delete endpoint",
         "description": "Testing update endpoint",
         "logo": "example-logo.png"
     }
     post_response = app.test_client().post('/resume/experience', json=example_experience)
     exp_id = post_response.json['id']
 
-    # Delete the experience
-    delete_response = app.test_client().delete(f'/resume/experience/{exp_id}')
-    assert delete_response.status_code == 200
-    assert delete_response.json["message"] == f"Experience with id {exp_id} deleted."
-
-    # Try to get all experiences and ensure the deleted one is not present
-    get_response = app.test_client().get('/resume/experience')
-    experiences = get_response.json
-    # Since the API returns a list of dicts without IDs, check by content
-    assert example_experience not in experiences
-    # Update the experience
+    # Update the experience BEFORE deleting
     updated_experience = {
         "title": "Updated Developer",
         "company": "Updated Company",
@@ -383,33 +372,15 @@ def test_edit_experience():
     expected_experience_no_id.pop("id")
     assert expected_experience_no_id in experiences
 
-def test_delete_experience():
-    '''Test deleting an experience by ID'''
-    # Add a new experience to ensure there is one to delete
-    example_experience = {
-        "title": "Delete Me",
-        "company": "Delete Company",
-        "start_date": "Jan 2025",
-        "end_date": "Dec 2025",
-        "description": "To be deleted",
-        "logo": "example-logo.png"
-    }
-    post_response = app.test_client().post('/resume/experience', json=example_experience)
-    exp_id = post_response.json['id']
-
-    # Delete the experience
+    # Now delete the experience
     delete_response = app.test_client().delete(f'/resume/experience/{exp_id}')
     assert delete_response.status_code == 200
     assert delete_response.json["message"] == f"Experience with id {exp_id} deleted."
 
-    # Try to get the deleted experience by ID (should be 404)
-    get_response = app.test_client().get(f'/resume/experience/{exp_id}')
-    assert get_response.status_code == 404
-
     # Try to get all experiences and ensure the deleted one is not present
-    get_all_response = app.test_client().get('/resume/experience')
-    experiences = get_all_response.json
-    assert example_experience not in experiences
+    get_response = app.test_client().get('/resume/experience')
+    experiences = get_response.json
+    assert expected_experience_no_id not in experiences
 
 def test_edit_education():
     '''Test updating an education by ID'''
@@ -446,3 +417,59 @@ def test_edit_education():
     expected_education_no_id = expected_education.copy()
     expected_education_no_id.pop("id")
     assert expected_education_no_id in educations
+
+def test_delete_education():
+    '''Test deleting an education by ID'''
+    # Add a new education to ensure there is one to delete
+    example_education = {
+        "course": "Delete Course",
+        "school": "Delete School",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "grade": "100%",
+        "logo": "example-logo.png"
+    }
+    post_response = app.test_client().post('/resume/education', json=example_education)
+    edu_id = post_response.json['id']
+
+    # Delete the education
+    delete_response = app.test_client().delete(f'/resume/education/{edu_id}')
+    assert delete_response.status_code == 200
+    assert delete_response.json["message"] == f"Education with id {edu_id} deleted."
+
+    # Try to get the deleted education by ID (should be 404)
+    get_response = app.test_client().get(f'/resume/education/{edu_id}')
+    assert get_response.status_code == 404
+
+    # Try to get all educations and ensure the deleted one is not present
+    get_all_response = app.test_client().get('/resume/education')
+    educations = get_all_response.json
+    assert example_education not in educations
+
+def test_delete_experience():
+    '''Test deleting an experience by ID'''
+    # Add a new experience to ensure there is one to delete
+    example_experience = {
+        "title": "Delete Me",
+        "company": "Delete Company",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "description": "To be deleted",
+        "logo": "example-logo.png"
+    }
+    post_response = app.test_client().post('/resume/experience', json=example_experience)
+    exp_id = post_response.json['id']
+
+    # Delete the experience
+    delete_response = app.test_client().delete(f'/resume/experience/{exp_id}')
+    assert delete_response.status_code == 200
+    assert delete_response.json["message"] == f"Experience with id {exp_id} deleted."
+
+    # Try to get the deleted experience by ID (should be 404)
+    get_response = app.test_client().get(f'/resume/experience/{exp_id}')
+    assert get_response.status_code == 404
+
+    # Try to get all experiences and ensure the deleted one is not present
+    get_all_response = app.test_client().get('/resume/experience')
+    experiences = get_all_response.json
+    assert example_experience not in experiences
