@@ -29,10 +29,35 @@ def test_experience():
         "logo": "example-logo.png"
     }
 
+ # POST to add new experience
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
+
+# GET individual experience by ID (fixed URL)
+    response = app.test_client().get(f'/resume/experience/{item_id}')
+    assert response.status_code == 200
+
+# The individual GET returns the full object including ID
+    returned_experience = response.json
+
+# Check each field (excluding ID since it's auto-generated)
+    for key, value in example_experience.items():
+        assert returned_experience[key] == value
+
+
+def test_experience_list():
+    '''
+    Test getting all experiences as a list
+    '''
+# GET all experiences
     response = app.test_client().get('/resume/experience')
-    assert response.json[item_id] == example_experience
+    assert response.status_code == 200
+
+# Should return a list
+    assert isinstance(response.json, list)
+
+ # Should have at least the default experience
+    assert len(response.json) >= 1
 
 
 def test_education():
@@ -49,11 +74,17 @@ def test_education():
         "grade": "86%",
         "logo": "example-logo.png"
     }
-    item_id = app.test_client().post('/resume/education',
-                                     json=example_education).json['id']
 
+# POST to add new education
+    app.test_client().post('/resume/education',
+                           json=example_education)
+
+# GET all education entries
     response = app.test_client().get('/resume/education')
-    assert response.json[item_id] == example_education
+    assert response.status_code == 200
+
+ # Check that our new education is in the list (without ID)
+    assert example_education in response.json
 
 
 def test_skill():
@@ -68,11 +99,17 @@ def test_skill():
         "logo": "example-logo.png"
     }
 
-    item_id = app.test_client().post('/resume/skill',
-                                     json=example_skill).json['id']
+ # POST to add new skill
+    app.test_client().post('/resume/skill',
+                           json=example_skill)
 
+ # GET all skills
     response = app.test_client().get('/resume/skill')
-    assert response.json[item_id] == example_skill
+    assert response.status_code == 200
+
+ # Check that our new skill is in the list (without ID)
+    assert example_skill in response.json
+
 
 def test_get_all_education():
     '''
@@ -298,15 +335,22 @@ def test_get_skill_by_id():
     assert get_response.status_code == 200
     assert get_response.get_json()["name"] == "Python"
 
+
 def test_delete_experience():
     '''Test deleting an experience by ID'''
     # Add a new experience to ensure there is one to delete
+
+def test_edit_experience():
+    '''Test updating an experience by ID'''
+    # Add a new experience to ensure there is one to update
+
     example_experience = {
         "title": "Test Developer",
         "company": "Test Company",
         "start_date": "Jan 2025",
         "end_date": "Dec 2025",
         "description": "Testing delete endpoint",
+        "description": "Testing update endpoint",
         "logo": "example-logo.png"
     }
     post_response = app.test_client().post('/resume/experience', json=example_experience)
@@ -322,3 +366,60 @@ def test_delete_experience():
     experiences = get_response.json
     # Since the API returns a list of dicts without IDs, check by content
     assert example_experience not in experiences
+    # Update the experience
+    updated_experience = {
+        "title": "Updated Developer",
+        "company": "Updated Company",
+        "start_date": "Feb 2025",
+        "end_date": "Nov 2025",
+        "description": "Updated description",
+        "logo": "updated-logo.png"
+    }
+    put_response = app.test_client().put(f'/resume/experience/{exp_id}', json=updated_experience)
+    assert put_response.status_code == 200
+    expected_experience = updated_experience.copy()
+    expected_experience["id"] = exp_id
+    assert put_response.json == expected_experience
+
+    # Get all experiences and ensure the updated one is present
+    get_response = app.test_client().get('/resume/experience')
+    experiences = get_response.json
+    expected_experience_no_id = expected_experience.copy()
+    expected_experience_no_id.pop("id")
+    assert expected_experience_no_id in experiences
+
+def test_edit_education():
+    '''Test updating an education by ID'''
+    # Add a new education to ensure there is one to update
+    example_education = {
+        "course": "Test Course",
+        "school": "Test School",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "grade": "100%",
+        "logo": "example-logo.png"
+    }
+    post_response = app.test_client().post('/resume/education', json=example_education)
+    edu_id = post_response.json['id']
+
+    # Update the education
+    updated_education = {
+        "course": "Updated Course",
+        "school": "Updated School",
+        "start_date": "Feb 2025",
+        "end_date": "Nov 2025",
+        "grade": "99%",
+        "logo": "updated-logo.png"
+    }
+    put_response = app.test_client().put(f'/resume/education/{edu_id}', json=updated_education)
+    assert put_response.status_code == 200
+    expected_education = updated_education.copy()
+    expected_education["id"] = edu_id
+    assert put_response.json == expected_education
+
+    # Get all educations and ensure the updated one is present
+    get_response = app.test_client().get('/resume/education')
+    educations = get_response.json
+    expected_education_no_id = expected_education.copy()
+    expected_education_no_id.pop("id")
+    assert expected_education_no_id in educations
