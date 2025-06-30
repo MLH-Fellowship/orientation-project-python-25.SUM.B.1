@@ -3,6 +3,7 @@
 Models for the Resume API. Each class is related to
 '''
 
+import re
 from dataclasses import dataclass
 
 
@@ -37,3 +38,23 @@ class Skill:
     name: str
     proficiency: str
     logo: str
+
+@dataclass
+class Contact:
+    """Contact model with validation methods for email and phone."""
+    name: str
+    email: str
+    phone: str
+    linkedin: str
+    github: str
+
+    def validate_email(self) -> bool:
+        """Validate the email format."""
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        return re.match(email_regex, self.email) is not None
+
+    def validate_phone(self) -> bool:
+        """Validate the phone number format with mandatory international country code."""
+        # Require + sign followed by a total of 8-15 digits (country code and phone number)
+        phone_regex = r'^\+[1-9]\d{7,14}$'  # Must start with +, then 8-15 total digits
+        return re.match(phone_regex, self.phone) is not None
