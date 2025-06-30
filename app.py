@@ -46,14 +46,35 @@ data = {
 @app.route('/test')
 def hello_world():
     '''
-    Returns a JSON test message
+    Test endpoint to verify API is running.
+    
+    Returns:
+        flask.Response: JSON response containing a test message with status 200
+        
+    Example:
+       type in POSTMAN: http://127.0.0.1:5000/test
+        Response: {"message": "Hello, World!"}
     '''
     return jsonify({"message": "Hello, World!"})
 
 
 @app.route('/resume/experience/<int:idx>', methods=['GET'])
 def get_experience_by_id(idx):
-    """GET and POST requests for experience entries."""
+    """
+    Retrieve a specific experience entry by its ID.
+    
+    Args:
+        idx (int): The index/ID of the experience entry to retrieve
+        
+    Returns:
+        flask.Response: JSON response containing the experience data if found,
+                       or error message with status 404 if not found
+                       
+    Example:
+        type in POSTMAN: http://127.0.0.1:5000/resume/experience/0
+        Success Response (200): {"company":"A Cool Company","description":"Writing Python Code","end_date":"Present","id":0,"logo":"example-logo.png","start_date":"October 2022","title":"Software Developer"}
+        Error Response (404): {"error": "Experience not found"}
+    """
 
     if 0 <= idx < len(data["experience"]):
         return jsonify(data["experience"][idx])
@@ -61,7 +82,36 @@ def get_experience_by_id(idx):
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
-    '''Handles GET and POST for experience.'''
+    '''
+    Handle GET and POST requests for experience entries.
+    
+    GET: Returns all experience entries as a list (excluding ID fields)
+    POST: Creates a new experience entry from JSON data
+    
+    Returns:
+        flask.Response: 
+            - GET: JSON array of experience objects (without ID)
+            - POST: JSON object with new entry ID and status 201
+            - Error: JSON error message with appropriate status code
+            
+    Request Body (POST):
+        JSON object containing:
+            - title (str): Job title
+            - company (str): Company name
+            - start_date (str): Start date
+            - end_date (str): End date
+            - description (str): Job description
+            - logo (str): Logo filename
+            
+    Example:
+        type in POSTMAN: http://127.0.0.1:5000/resume/experience
+        Response: [array of experience objects]
+        
+        POST http://127.0.0.1:5000/resume/experience
+        Body/raw/JSON
+        Request: {"company":"A Cool Company","description":"Writing Python Code","end_date":"Present","logo":"example-logo.png","start_date":"October 2022","title":"Software Developer"}
+        Response: {"id": 1}
+    '''
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in exp.__dict__.items() if k != "id"}
@@ -80,7 +130,35 @@ def experience():
 
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
-    '''Handles GET and POST for education.'''
+    '''
+    Handle GET and POST requests for education entries.
+    
+    GET: Returns all education entries as a list (excluding ID fields)
+    POST: Creates a new education entry from JSON data
+    
+    Returns:
+        flask.Response:
+            - GET: JSON array of education objects (without ID)
+            - POST: JSON object with new entry ID and status 201
+            - Error: JSON error message with appropriate status code
+            
+    Request Body (POST):
+        JSON object containing:
+            - course (str): Course/degree name
+            - school (str): School/university name
+            - start_date (str): Start date
+            - end_date (str): End date
+            - grade (str): Grade/percentage achieved
+            - logo (str): Logo filename
+            
+    Example:
+        GET http://127.0.0.1:5000/resume/education
+        Response: [array of education objects]
+        
+        POST http://127.0.0.1:5000/resume/education
+        Request: {education data}
+        Response: {"id": 1}
+    '''
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in edu.__dict__.items() if k != "id"}
@@ -99,7 +177,32 @@ def education():
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
-    '''Handles GET and POST for skill.'''
+    '''
+    Handle GET and POST requests for skill entries.
+    
+    GET: Returns all skill entries as a list (excluding ID fields)
+    POST: Creates a new skill entry from JSON data
+    
+    Returns:
+        flask.Response:
+            - GET: JSON array of skill objects (without ID)
+            - POST: JSON object with new entry ID and status 201
+            - Error: JSON error message with appropriate status code
+            
+    Request Body (POST):
+        JSON object containing:
+            - name (str): Skill name
+            - proficiency (str): Proficiency level/years of experience
+            - logo (str): Logo filename
+            
+    Example:
+        GET http://127.0.0.1:5000/resume/skill
+        Response: [array of skill objects]
+        
+        POST http://127.0.0.1:5000/resume/skill
+        Request: {skill data}
+        Response: {"id": 1}
+    '''
     if request.method == 'GET':
         return jsonify([
             {k: v for k, v in s.__dict__.items() if k != "id"}
@@ -118,17 +221,51 @@ def skill():
 
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
-    '''Returns one education entry by ID.'''
+    '''
+    Retrieve a specific education entry by its ID.
+    
+    Args:
+        education_id (int): The ID of the education entry to retrieve
+        
+    Returns:
+        flask.Response: JSON response containing the education data if found,
+                       or error message with status 404 if not found
+                       
+    Example:
+        GET http://127.0.0.1:5000/resume/education/0
+        Success Response (200): {education object with ID}
+        Error Response (404): {"error": "Education not found"}
+    '''
     for edu in data["education"]:
         if edu.id == education_id:
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
 
-#Update Exisitng Skill by Index
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
 def edit_skill(skill_id):
-    """Updates an existing skill by its ID (index) with provided JSON data."""
+    """
+    Update an existing skill entry by its ID.
+    
+    Args:
+        skill_id (int): The ID of the skill to update
+        
+    Returns:
+        flask.Response: JSON response containing the updated skill data if found,
+                       or error message with status 404 if not found
+                       
+    Request Body:
+        JSON object containing any of:
+            - name (str, optional): New skill name
+            - proficiency (str, optional): New proficiency level
+            - logo (str, optional): New logo filename
+            
+    Example:
+        PUT http://127.0.0.1:5000/resume/skill/0
+        Request: {"name": "JavaScript", "proficiency": "3 years"}
+        Success Response (200): {updated skill object}
+        Error Response (404): {"error": "Skill not found"}
+    """
     if 0 <= skill_id < len(data["skill"]):
         skill_data = request.json
         new_skill = data["skill"][skill_id]
