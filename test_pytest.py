@@ -377,6 +377,7 @@ def test_edit_experience():
     assert expected_experience_no_id in experiences
 
 def test_edit_education():
+    '''Test editing an education entry in the resume API.'''
     # Add a new education to ensure there is one to update
     example_education = {
         "course": "Test Course",
