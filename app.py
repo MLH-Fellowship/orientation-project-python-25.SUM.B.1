@@ -6,11 +6,10 @@ Provides endpoints for CRUD operations on resume components.
 '''
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
-from models import Experience, Education, Skill
+from models import Experience, Education, Skill, Contact
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS for all routes
 
 data = {
     "experience": [
@@ -42,9 +41,9 @@ data = {
             proficiency="1-2 Years",
             logo="example-logo.png"
         )
-    ]
+    ],
+    "contact": None
 }
-
 
 @app.route('/test')
 def hello_world():
@@ -60,6 +59,13 @@ def hello_world():
     '''
     return jsonify({"message": "Hello, World!"})
 
+@app.route('/resume/experience/<int:idx>', methods=['GET'])
+def get_experience_by_id(idx):
+    """GET and POST requests for experience entries."""
+
+    if 0 <= idx < len(data["experience"]):
+        return jsonify(data["experience"][idx])
+    return jsonify({"error": "Experience not found"}), 404
 
 @app.route('/resume/experience/<int:idx>', methods=['GET'])
 def get_experience_by_id(idx):
@@ -129,7 +135,6 @@ def experience():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
     '''
@@ -176,7 +181,6 @@ def education():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
     '''
@@ -219,7 +223,6 @@ def skill():
         return jsonify({"id": new_id}), 201
 
     return jsonify({"error": "Method not allowed"}), 405
-
 
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):

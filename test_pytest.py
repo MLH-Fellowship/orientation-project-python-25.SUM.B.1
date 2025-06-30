@@ -2,6 +2,7 @@
 Tests in Pytest
 '''
 from app import app
+from models import Contact
 
 
 def test_client():
@@ -162,15 +163,39 @@ def test_update_skill():
         "logo": "example-logo.png"
     }
 
-    skill_id = app.test_client().post('/resume/skill', json=new_skill).json['id']
+    # Post the skill to create it
+    post_response = client.post('/resume/skill', json=new_skill)
+    new_id = post_response.get_json()["id"]
 
+    # Update the skill
     updated_skill = {
-        "name": "C++",
-        "proficiency": "3 years",
-        "logo": "updated-logo.png"
+        "name": "Python",
+        "proficiency": "5 years",  # Changed proficiency
+        "logo": "example-logo.png"
     }
 
-    response = app.test_client().put(f'/resume/skill/{skill_id}', json=updated_skill)
+    # Put the updated skill
+    put_response = client.put(f'/resume/skill/{new_id}', json=updated_skill)
+    assert put_response.status_code == 200
+
+    # Get the skill to verify it was updated
+    get_response = client.get(f'/resume/skill/{new_id}')
+    assert get_response.status_code == 200
+    assert get_response.get_json()["proficiency"] == "5 years"
+
+
+
+def test_delete_skill():
+    """Tests the DELETE /resume/skill/<skill_id> endpoint."""
+    new_skill = {
+        "name": "C++",
+        "proficiency": "4 years",
+        "logo": "example-logo.png"
+    }
+
+    skill_id = app.test_client().post('/resume/skill', json=new_skill).json['id']
+
+    response = app.test_client().delete(f'/resume/skill/{skill_id}')
     assert response.status_code == 200
     assert response.json['name'] == updated_skill['name']
     assert response.json['proficiency'] == updated_skill['proficiency']
