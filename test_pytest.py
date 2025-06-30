@@ -1,5 +1,5 @@
 """
-Tests in Pytest 
+Tests in Pytest
 """
 from app import app
 
@@ -102,8 +102,7 @@ def test_education():
     }
 
     # POST to add new education
-    app.test_client().post('/resume/education',
-                           json=example_education)
+    app.test_client().post('/resume/education', json=example_education)
 
     # GET all education entries
     response = app.test_client().get('/resume/education')
@@ -132,8 +131,7 @@ def test_skill():
     }
 
     # POST to add new skill
-    app.test_client().post('/resume/skill',
-                           json=example_skill)
+    app.test_client().post('/resume/skill', json=example_skill)
 
     # GET all skills
     response = app.test_client().get('/resume/skill')
@@ -162,8 +160,7 @@ def test_update_skill():
         "logo": "example-logo.png"
     }
 
-    skill_response = app.test_client().post('/resume/skill', json=new_skill)
-    skill_id = skill_response.json['id']
+    skill_id = app.test_client().post('/resume/skill', json=new_skill).json['id']
 
     updated_skill = {
         "name": "C++",
