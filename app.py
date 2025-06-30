@@ -1,5 +1,8 @@
 '''
 Flask Application
+
+A REST API for managing resume data including experience, education, and skills.
+Provides endpoints for CRUD operations on resume components.
 '''
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -20,7 +23,7 @@ data = {
             description="Writing Python Code",
             logo="example-logo.png"
         )
-    ],
+],
     "education": [
         Education(
             id=0,
@@ -52,7 +55,7 @@ def hello_world():
         flask.Response: JSON response containing a test message with status 200
         
     Example:
-        GET http://127.0.0.1:5000/test
+        GET /test
         Response: {"message": "Hello, World!"}
     '''
     return jsonify({"message": "Hello, World!"})
@@ -71,18 +74,11 @@ def get_experience_by_id(idx):
                        or error message with status 404 if not found
                        
     Example:
-        GET http://127.0.0.1:5000/resume/experience/0
-        Success Response (200):
-{
-  "id": 0,
-  "title": "Software Developer",
-  "company": "A Cool Company",
-  "start_date": "October 2022",
-  "end_date": "Present",
-  "description": "Writing Python Code",
-  "logo": "example-logo.png"
-}
+        GET /resume/experience/0
+        Success Response (200): {experience object}
+        Error Response (404): {"error": "Experience not found"}
     """
+
     if 0 <= idx < len(data["experience"]):
         return jsonify(data["experience"][idx])
     return jsonify({"error": "Experience not found"}), 404
@@ -170,7 +166,7 @@ def education():
             {k: v for k, v in edu.__dict__.items() if k != "id"}
             for edu in data["education"]
         ])
-    
+
     if request.method == 'POST':
         edu_data = request.get_json()
         new_id = len(data["education"])
@@ -179,6 +175,7 @@ def education():
         return jsonify({"id": new_id}), 201
 
     return jsonify({"error": "Method not allowed"}), 405
+
 
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
@@ -197,7 +194,7 @@ def skill():
     Request Body (POST):
         JSON object containing:
             - name (str): Skill name
-            - proficiency (str): Proficiency level
+            - proficiency (str): Proficiency level/years of experience
             - logo (str): Logo filename
             
     Example:
@@ -223,6 +220,7 @@ def skill():
 
     return jsonify({"error": "Method not allowed"}), 405
 
+
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
     '''
@@ -234,6 +232,11 @@ def get_education_by_id(education_id):
     Returns:
         flask.Response: JSON response containing the education data if found,
                        or error message with status 404 if not found
+                       
+    Example:
+        GET /resume/education/0
+        Success Response (200): {education object with ID}
+        Error Response (404): {"error": "Education not found"}
     '''
     for edu in data["education"]:
         if edu.id == education_id:
@@ -244,20 +247,26 @@ def get_education_by_id(education_id):
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
 def edit_skill(skill_id):
     """
-    Update an existing skill by its ID with provided JSON data.
+    Update an existing skill entry by its ID.
     
     Args:
         skill_id (int): The ID of the skill to update
         
     Returns:
-        flask.Response: JSON response containing updated skill data if found,
+        flask.Response: JSON response containing the updated skill data if found,
                        or error message with status 404 if not found
                        
     Request Body:
-        JSON object containing skill fields to update:
-            - name (str, optional): Skill name
-            - proficiency (str, optional): Proficiency level
-            - logo (str, optional): Logo filename
+        JSON object containing any of:
+            - name (str, optional): New skill name
+            - proficiency (str, optional): New proficiency level
+            - logo (str, optional): New logo filename
+            
+    Example:
+        PUT /resume/skill/0
+        Request: {"name": "JavaScript", "proficiency": "3 years"}
+        Success Response (200): {updated skill object}
+        Error Response (404): {"error": "Skill not found"}
     """
     if 0 <= skill_id < len(data["skill"]):
         skill_data = request.json
@@ -268,6 +277,3 @@ def edit_skill(skill_id):
         return jsonify(new_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
-
-if __name__ == '__main__':
-    app.run(debug=True)
