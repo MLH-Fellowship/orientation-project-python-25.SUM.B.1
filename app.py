@@ -8,7 +8,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from models import Experience, Education, Skill, Contact
 
-app = Flask(__name__)                                                                                                                      
+app = Flask(__name__)                                                                                                                     
 CORS(app)
 
 data = {
@@ -58,8 +58,7 @@ def hello_world():
         Response: {"message": "Hello, World!"}
     '''
     return jsonify({"message": "Hello, World!"})
-                                                                              
-                                                                              
+
 @app.route('/resume/experience/<int:idx>', methods=['GET'])
 def get_experience_by_id(idx):
     """
