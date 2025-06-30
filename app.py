@@ -72,12 +72,20 @@ def get_experience_by_id(idx):
                        
     Example:
         GET http://127.0.0.1:5000/resume/experience/0
-        Success Response (200): {"company":"A Cool Company","description":"Writing Python Code","end_date":"Present","id":0,"logo":"example-logo.png","start_date":"October 2022","title":"Software Developer"}
+        Success Response (200):
+{
+  "id": 0,
+  "title": "Software Developer",
+  "company": "A Cool Company",
+  "start_date": "October 2022",
+  "end_date": "Present",
+  "description": "Writing Python Code",
+  "logo": "example-logo.png"
+}
     """
     if 0 <= idx < len(data["experience"]):
         return jsonify(data["experience"][idx])
     return jsonify({"error": "Experience not found"}), 404
-
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
@@ -172,7 +180,6 @@ def education():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/skill', methods=['GET', 'POST'])
 def skill():
     '''
@@ -216,7 +223,6 @@ def skill():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-
 @app.route('/resume/education/<int:education_id>', methods=['GET'])
 def get_education_by_id(education_id):
     '''
@@ -234,7 +240,6 @@ def get_education_by_id(education_id):
             return jsonify(edu.__dict__), 200
 
     return jsonify({"error": "Education not found"}), 404
-
 
 @app.route('/resume/skill/<int:skill_id>', methods=['PUT'])
 def edit_skill(skill_id):
@@ -263,7 +268,6 @@ def edit_skill(skill_id):
         return jsonify(new_skill.__dict__), 200
 
     return jsonify({"error": "Skill not found"}), 404
-
 
 if __name__ == '__main__':
     app.run(debug=True)
