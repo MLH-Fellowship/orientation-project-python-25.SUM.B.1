@@ -447,3 +447,273 @@ def test_edit_education():
     expected_education_no_id = expected_education.copy()
     expected_education_no_id.pop("id")
     assert expected_education_no_id in educations
+
+    # Add these test functions to the end of your test_pytest.py file
+
+def test_experience_validation_missing_fields():
+    '''Test that POST /resume/experience returns 400 for missing required fields'''
+    # Test with completely empty data
+    response = app.test_client().post('/resume/experience', json={})
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+    
+    # Test with some missing fields
+    incomplete_experience = {
+        "title": "Software Developer",
+        "company": "Test Company"
+        # Missing: start_date, end_date, description, logo
+    }
+    response = app.test_client().post('/resume/experience', json=incomplete_experience)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+    
+    # Test with empty string values (should also fail)
+    empty_experience = {
+        "title": "",
+        "company": "Test Company",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "description": "Test description",
+        "logo": "test-logo.png"
+    }
+    response = app.test_client().post('/resume/experience', json=empty_experience)
+    assert response.status_code == 400
+    assert 'error' in response.json
+
+
+def test_education_validation_missing_fields():
+    '''Test that POST /resume/education returns 400 for missing required fields'''
+    # Test with completely empty data
+    response = app.test_client().post('/resume/education', json={})
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+    
+    # Test with some missing fields
+    incomplete_education = {
+        "course": "Computer Science",
+        "school": "Test University"
+        # Missing: start_date, end_date, grade, logo
+    }
+    response = app.test_client().post('/resume/education', json=incomplete_education)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+    
+    # Test with empty string values (should also fail)
+    empty_education = {
+        "course": "Computer Science",
+        "school": "",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "grade": "A",
+        "logo": "test-logo.png"
+    }
+    response = app.test_client().post('/resume/education', json=empty_education)
+    assert response.status_code == 400
+    assert 'error' in response.json
+
+
+def test_skill_validation_missing_fields():
+    '''Test that POST /resume/skill returns 400 for missing required fields'''
+    # Test with completely empty data
+    response = app.test_client().post('/resume/skill', json={})
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+    
+    # Test with some missing fields
+    incomplete_skill = {
+        "name": "Python"
+        # Missing: proficiency, logo
+    }
+    response = app.test_client().post('/resume/skill', json=incomplete_skill)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+    
+    # Test with empty string values (should also fail)
+    empty_skill = {
+        "name": "Python",
+        "proficiency": "",
+        "logo": "python-logo.png"
+    }
+    response = app.test_client().post('/resume/skill', json=empty_skill)
+    assert response.status_code == 400
+    assert 'error' in response.json
+
+
+def test_contact_validation_missing_fields():
+    '''Test that POST /contact returns 400 for missing required fields'''
+    # Test with completely empty data
+    response = app.test_client().post('/contact', json={})
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+    
+    # Test with some missing fields
+    incomplete_contact = {
+        "name": "John Doe",
+        "email": "john@example.com"
+        # Missing: phone, linkedin, github
+    }
+    response = app.test_client().post('/contact', json=incomplete_contact)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+
+
+def test_contact_validation_invalid_email():
+    '''Test that POST /contact returns 400 for invalid email format'''
+    invalid_contact = {
+        "name": "John Doe",
+        "email": "invalid-email-format",
+        "phone": "+1234567890",
+        "linkedin": "https://linkedin.com/in/johndoe",
+        "github": "https://github.com/johndoe"
+    }
+    response = app.test_client().post('/contact', json=invalid_contact)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Invalid email format' in response.json['error']
+
+
+def test_contact_validation_invalid_phone():
+    '''Test that POST /contact returns 400 for invalid phone format'''
+    invalid_contact = {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "1234567890",  # Missing + sign
+        "linkedin": "https://linkedin.com/in/johndoe",
+        "github": "https://github.com/johndoe"
+    }
+    response = app.test_client().post('/contact', json=invalid_contact)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Invalid phone format' in response.json['error']
+
+
+def test_no_json_data_experience():
+    '''Test that POST /resume/experience returns 400 when no JSON data is provided'''
+    response = app.test_client().post('/resume/experience')
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'No JSON data provided' in response.json['error']
+
+
+def test_no_json_data_education():
+    '''Test that POST /resume/education returns 400 when no JSON data is provided'''
+    response = app.test_client().post('/resume/education')
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'No JSON data provided' in response.json['error']
+
+
+def test_no_json_data_skill():
+    '''Test that POST /resume/skill returns 400 when no JSON data is provided'''
+    response = app.test_client().post('/resume/skill')
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'No JSON data provided' in response.json['error']
+
+
+def test_none_values_experience():
+    '''Test that POST /resume/experience returns 400 when fields have None values'''
+    experience_with_none = {
+        "title": "Software Developer",
+        "company": None,  # None value
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "description": "Test description",
+        "logo": "test-logo.png"
+    }
+    response = app.test_client().post('/resume/experience', json=experience_with_none)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+
+
+def test_none_values_education():
+    '''Test that POST /resume/education returns 400 when fields have None values'''
+    education_with_none = {
+        "course": "Computer Science",
+        "school": None,  # None value
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "grade": "A",
+        "logo": "test-logo.png"
+    }
+    response = app.test_client().post('/resume/education', json=education_with_none)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+
+
+def test_none_values_skill():
+    '''Test that POST /resume/skill returns 400 when fields have None values'''
+    skill_with_none = {
+        "name": None,  # None value
+        "proficiency": "Expert",
+        "logo": "test-logo.png"
+    }
+    response = app.test_client().post('/resume/skill', json=skill_with_none)
+    assert response.status_code == 400
+    assert 'error' in response.json
+    assert 'Missing required fields' in response.json['error']
+
+
+def test_experience_validation_success():
+    '''Test that POST /resume/experience succeeds with valid data'''
+    valid_experience = {
+        "title": "Software Developer",
+        "company": "Valid Company",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "description": "Valid description",
+        "logo": "valid-logo.png"
+    }
+    response = app.test_client().post('/resume/experience', json=valid_experience)
+    assert response.status_code == 201  # Created
+    assert 'id' in response.json
+
+
+def test_education_validation_success():
+    '''Test that POST /resume/education succeeds with valid data'''
+    valid_education = {
+        "course": "Computer Science",
+        "school": "Valid University",
+        "start_date": "Jan 2025",
+        "end_date": "Dec 2025",
+        "grade": "A",
+        "logo": "valid-logo.png"
+    }
+    response = app.test_client().post('/resume/education', json=valid_education)
+    assert response.status_code == 201  # Created
+    assert 'id' in response.json
+
+
+def test_skill_validation_success():
+    '''Test that POST /resume/skill succeeds with valid data'''
+    valid_skill = {
+        "name": "Python",
+        "proficiency": "Expert",
+        "logo": "python-logo.png"
+    }
+    response = app.test_client().post('/resume/skill', json=valid_skill)
+    assert response.status_code == 201  # Created
+    assert 'id' in response.json
+
+
+def test_contact_validation_success():
+    '''Test that POST /contact succeeds with valid data'''
+    valid_contact = {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "linkedin": "https://linkedin.com/in/johndoe",
+        "github": "https://github.com/johndoe"
+    }
+    response = app.test_client().post('/contact', json=valid_contact)
+    assert response.status_code == 201  # Created

@@ -119,11 +119,30 @@ def experience():
         ])
 
     if request.method == 'POST':
+        # Check if request has JSON content type, if not return 400 instead of 415
+        if not request.is_json:
+            return jsonify({"error": "No JSON data provided"}), 400
+            
         exp_data = request.get_json()
-        new_id = len(data["experience"])
-        new_exp = Experience(id=new_id, **exp_data)
-        data["experience"].append(new_exp)
-        return jsonify({"id": new_id}), 201
+        
+        # Validate that we have JSON data (could be None, but {} is valid)
+        if exp_data is None:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        # Required fields for experience
+        required_fields = ['title', 'company', 'start_date', 'end_date', 'description', 'logo']
+        missing_fields = [field for field in required_fields if field not in exp_data or exp_data[field] is None or exp_data[field] == ""]
+        
+        if missing_fields:
+            return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+        
+        try:
+            new_id = len(data["experience"])
+            new_exp = Experience(id=new_id, **exp_data)
+            data["experience"].append(new_exp)
+            return jsonify({"id": new_id}), 201
+        except (TypeError, ValueError) as e:
+            return jsonify({"error": f"Invalid data format: {str(e)}"}), 400
 
     return jsonify({"error": "Method not allowed"}), 405
 
@@ -165,11 +184,30 @@ def education():
         ])
 
     if request.method == 'POST':
+        # Check if request has JSON content type, if not return 400 instead of 415
+        if not request.is_json:
+            return jsonify({"error": "No JSON data provided"}), 400
+            
         edu_data = request.get_json()
-        new_id = len(data["education"])
-        new_edu = Education(id=new_id, **edu_data)
-        data["education"].append(new_edu)
-        return jsonify({"id": new_id}), 201
+        
+        # Validate that we have JSON data (could be None, but {} is valid)
+        if edu_data is None:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        # Required fields for education
+        required_fields = ['course', 'school', 'start_date', 'end_date', 'grade', 'logo']
+        missing_fields = [field for field in required_fields if field not in edu_data or edu_data[field] is None or edu_data[field] == ""]
+        
+        if missing_fields:
+            return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+        
+        try:
+            new_id = len(data["education"])
+            new_edu = Education(id=new_id, **edu_data)
+            data["education"].append(new_edu)
+            return jsonify({"id": new_id}), 201
+        except (TypeError, ValueError) as e:
+            return jsonify({"error": f"Invalid data format: {str(e)}"}), 400
 
     return jsonify({"error": "Method not allowed"}), 405
 
@@ -208,11 +246,30 @@ def skill():
         ])
 
     if request.method == 'POST':
+        # Check if request has JSON content type, if not return 400 instead of 415
+        if not request.is_json:
+            return jsonify({"error": "No JSON data provided"}), 400
+            
         skill_data = request.get_json()
-        new_id = len(data["skill"])
-        new_skill = Skill(id=new_id, **skill_data)
-        data["skill"].append(new_skill)
-        return jsonify({"id": new_id}), 201
+        
+        # Validate that we have JSON data (could be None, but {} is valid)
+        if skill_data is None:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        # Required fields for skill
+        required_fields = ['name', 'proficiency', 'logo']
+        missing_fields = [field for field in required_fields if field not in skill_data or skill_data[field] is None or skill_data[field] == ""]
+        
+        if missing_fields:
+            return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+        
+        try:
+            new_id = len(data["skill"])
+            new_skill = Skill(id=new_id, **skill_data)
+            data["skill"].append(new_skill)
+            return jsonify({"id": new_id}), 201
+        except (TypeError, ValueError) as e:
+            return jsonify({"error": f"Invalid data format: {str(e)}"}), 400
 
     return jsonify({"error": "Method not allowed"}), 405
 
