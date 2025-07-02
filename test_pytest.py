@@ -383,7 +383,7 @@ def test_edit_experience():
     assert expected_experience_no_id not in experiences
 
 def test_edit_education():
-    '''Test updating an education by ID'''
+    '''Test editing an education entry in the resume API.'''
     # Add a new education to ensure there is one to update
     example_education = {
         "course": "Test Course",
@@ -417,6 +417,11 @@ def test_edit_education():
     expected_education_no_id = expected_education.copy()
     expected_education_no_id.pop("id")
     assert expected_education_no_id in educations
+
+    # (Optional) Now delete and verify deletion
+    delete_response = app.test_client().delete(f'/resume/education/{edu_id}')
+    assert delete_response.status_code == 200
+    assert delete_response.json["message"] == f"Education with id {edu_id} deleted."
 
 def test_delete_education():
     '''Test deleting an education by ID'''
