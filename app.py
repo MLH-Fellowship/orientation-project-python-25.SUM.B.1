@@ -380,7 +380,8 @@ def delete_experience(exp_id):
         del data["experience"][exp_id]
         return jsonify({"message": f"Experience with id {exp_id} deleted."}), 200
     return jsonify({"error": "Experience not found"}), 404
-    
+
+
 @app.route('/resume/experience/<int:exp_id>', methods=['PUT'])
 def edit_experience(exp_id):
     '''Updates an existing experience by its ID (index) with provided JSON data.'''
