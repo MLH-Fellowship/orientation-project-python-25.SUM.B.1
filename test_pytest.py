@@ -7,7 +7,14 @@ from models import Contact
 
 def test_client():
     '''
-    Makes a request and checks the message received is the same
+    Test the basic test endpoint to ensure API is running.
+    
+    Verifies:
+        - API responds with status 200
+        - Response contains expected test message
+        
+    Returns:
+        None: Asserts pass/fail for test validation
     '''
     response = app.test_client().get('/test')
     assert response.status_code == 200
@@ -16,9 +23,15 @@ def test_client():
 
 def test_experience():
     '''
-    Add a new experience and then get all experiences.
-
-    Check that it returns the new experience in that list
+    Test adding a new experience and retrieving it by ID.
+    
+    Verifies:
+        - POST request creates new experience successfully
+        - GET request retrieves the specific experience by ID
+        - Response data matches the input data
+        
+    Returns:
+        None: Asserts pass/fail for test validation
     '''
     example_experience = {
         "title": "Software Developer",
@@ -29,42 +42,56 @@ def test_experience():
         "logo": "example-logo.png"
     }
 
- # POST to add new experience
+    # POST to add new experience
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
 
-# GET individual experience by ID (fixed URL)
+    # GET individual experience by ID (fixed URL)
     response = app.test_client().get(f'/resume/experience/{item_id}')
     assert response.status_code == 200
 
-# The individual GET returns the full object including ID
+    # The individual GET returns the full object including ID
     returned_experience = response.json
 
-# Check each field (excluding ID since it's auto-generated)
+    # Check each field (excluding ID since it's auto-generated)
     for key, value in example_experience.items():
         assert returned_experience[key] == value
 
 
 def test_experience_list():
     '''
-    Test getting all experiences as a list
+    Test retrieving all experiences as a list.
+    
+    Verifies:
+        - GET request returns status 200
+        - Response is a list format
+        - List contains at least the default experience entry
+        
+    Returns:
+        None: Asserts pass/fail for test validation
     '''
-# GET all experiences
+    # GET all experiences
     response = app.test_client().get('/resume/experience')
     assert response.status_code == 200
 
-# Should return a list
+    # Should return a list
     assert isinstance(response.json, list)
 
- # Should have at least the default experience
+    # Should have at least the default experience
     assert len(response.json) >= 1
 
 
 def test_education():
     '''
-    Add a new education and then get all educations.
-
-    Check that it returns the new education in that list
+    Test adding a new education entry and retrieving all education entries.
+    
+    Verifies:
+        - POST request creates new education successfully
+        - GET request returns all education entries as a list
+        - New education entry appears in the list
+        
+    Returns:
+        None: Asserts pass/fail for test validation
     '''
     example_education = {
         "course": "Engineering",
@@ -75,23 +102,29 @@ def test_education():
         "logo": "example-logo.png"
     }
 
-# POST to add new education
+    # POST to add new education
     app.test_client().post('/resume/education',
                            json=example_education)
 
-# GET all education entries
+    # GET all education entries
     response = app.test_client().get('/resume/education')
     assert response.status_code == 200
 
- # Check that our new education is in the list (without ID)
+    # Check that our new education is in the list (without ID)
     assert example_education in response.json
 
 
 def test_skill():
     '''
-    Add a new skill and then get all skills.
-
-    Check that it returns the new skill in that list
+    Test adding a new skill and retrieving all skills.
+    
+    Verifies:
+        - POST request creates new skill successfully
+        - GET request returns all skills as a list
+        - New skill appears in the list
+        
+    Returns:
+        None: Asserts pass/fail for test validation
     '''
     example_skill = {
         "name": "JavaScript",
@@ -99,15 +132,15 @@ def test_skill():
         "logo": "example-logo.png"
     }
 
- # POST to add new skill
+    # POST to add new skill
     app.test_client().post('/resume/skill',
                            json=example_skill)
 
- # GET all skills
+    # GET all skills
     response = app.test_client().get('/resume/skill')
     assert response.status_code == 200
 
- # Check that our new skill is in the list (without ID)
+    # Check that our new skill is in the list (without ID)
     assert example_skill in response.json
 
 
@@ -126,6 +159,7 @@ def test_get_all_education():
         assert "course" in education_list[0]
         assert "school" in education_list[0]
 
+
 def test_get_all_experience():
     '''
     Checks if all experience entries can test using GET.
@@ -141,6 +175,7 @@ def test_get_all_experience():
         assert "title" in experience_list[0]
         assert "company" in experience_list[0]
 
+
 def test_get_all_skills():
     '''
     Checks if all skill entries can test GET.
@@ -155,6 +190,7 @@ def test_get_all_skills():
     if skill_list:
         assert "name" in skill_list[0]
         assert "proficiency" in skill_list[0]
+
 
 def test_get_education_by_id():
     '''
@@ -179,6 +215,7 @@ def test_get_education_by_id():
     get_response = client.get(f'/resume/education/{new_id}')
     assert get_response.status_code == 200
     assert get_response.get_json()["course"] == "Data Science"
+
 
 def test_contact_creation():
     '''Test creating a contact with valid data'''
@@ -296,7 +333,6 @@ def test_update_skill():
     assert get_response.get_json()["proficiency"] == "5 years"
 
 
-
 def test_delete_skill():
     """Tests the DELETE /resume/skill/<skill_id> endpoint."""
     new_skill = {
@@ -311,8 +347,11 @@ def test_delete_skill():
     assert response.status_code == 200
     assert response.json['name'] == new_skill['name']
 
+    # Verify the skill was deleted by checking it's not in the list
     get_response = app.test_client().get('/resume/skill')
-    assert skill_id not in get_response.json
+    skill_ids = [skill.get('id') for skill in get_response.json if isinstance(skill, dict)]
+    assert skill_id not in skill_ids
+
 
 def test_get_skill_by_id():
     '''
@@ -371,6 +410,7 @@ def test_edit_experience():
     expected_experience_no_id = expected_experience.copy()
     expected_experience_no_id.pop("id")
     assert expected_experience_no_id in experiences
+
 
     # Now delete the experience
     delete_response = app.test_client().delete(f'/resume/experience/{exp_id}')
